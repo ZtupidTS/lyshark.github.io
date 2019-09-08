@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next gemini" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"slideUpIn","post_header":"slideUpIn","post_body":"slideUpIn","coll_header":"slideUpIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="汇编语言(assembly language)是一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言,亦称为符号语言.在汇编语言中,用助记符(Mnemonics)代替机器指令的操作码,用地址符号(Symbol)或标号(Label)代替指令或操作数的地址.在不同的设备中,汇编语言对应着不同的机器语言指令集,通过汇编过程转换成机器指令,普遍地说,特定的汇编语言和特定的机器语言指令集是相互对">
+<meta name="keywords" content="汇编与反汇编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Win32汇编过程与宏(3)">
+<meta property="og:url" content="https://localhost/2019/04/18/汇编与反汇编/Win32汇编过程与宏-3/index.html">
+<meta property="og:site_name" content="哔哩哔">
+<meta property="og:description" content="汇编语言(assembly language)是一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言,亦称为符号语言.在汇编语言中,用助记符(Mnemonics)代替机器指令的操作码,用地址符号(Symbol)或标号(Label)代替指令或操作数的地址.在不同的设备中,汇编语言对应着不同的机器语言指令集,通过汇编过程转换成机器指令,普遍地说,特定的汇编语言和特定的机器语言指令集是相互对">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-09-07T00:34:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Win32汇编过程与宏(3)">
+<meta name="twitter:description" content="汇编语言(assembly language)是一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言,亦称为符号语言.在汇编语言中,用助记符(Mnemonics)代替机器指令的操作码,用地址符号(Symbol)或标号(Label)代替指令或操作数的地址.在不同的设备中,汇编语言对应着不同的机器语言指令集,通过汇编过程转换成机器指令,普遍地说,特定的汇编语言和特定的机器语言指令集是相互对">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="哔哩哔" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://localhost/2019/04/18/汇编与反汇编/Win32汇编过程与宏-3/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Win32汇编过程与宏(3) | 哔哩哔</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">哔哩哔</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://localhost/2019/04/18/汇编与反汇编/Win32汇编过程与宏-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王瑞">
+      <meta itemprop="description" content="记录点滴技术成长之路">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="哔哩哔">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Win32汇编过程与宏(3)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-18 13:45:01" itemprop="dateCreated datePublished" datetime="2019-04-18T13:45:01+08:00">2019-04-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-07 08:34:26" itemprop="dateModified" datetime="2019-09-07T08:34:26+08:00">2019-09-07</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/汇编与反汇编/" itemprop="url" rel="index"><span itemprop="name">汇编与反汇编</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>汇编语言(assembly language)是一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言,亦称为符号语言.在汇编语言中,用助记符(Mnemonics)代替机器指令的操作码,用地址符号(Symbol)或标号(Label)代替指令或操作数的地址.在不同的设备中,汇编语言对应着不同的机器语言指令集,通过汇编过程转换成机器指令,普遍地说,特定的汇编语言和特定的机器语言指令集是相互对应的,不同平台之间不可直接移植.</p>
+<a id="more"></a>
+<p><br></p>
+<h2 id="堆栈操作指令"><a href="#堆栈操作指令" class="headerlink" title="堆栈操作指令"></a>堆栈操作指令</h2><p>在计算机领域,堆栈是一个不容忽视的概念,堆栈是一种<code>后进先出(LIFO,Last-In,First-Out)</code>的数据结构,这是因为最后压入堆栈的值总是最先被取出,而新数值在执行PUSH压栈时总是被加到堆栈的最顶端,数据也总是从堆栈的最顶端被取出,堆栈是个<code>特殊的存储区</code>,主要功能是暂时存放数据和地址,通常用来保护断点和现场.</p>
+<p>当程序运行时,栈是由CPU<code>直接管理</code>的<code>线性</code>内存数组,它使用两个寄存器<code>(SS和ESP)</code>来保存堆栈的状态.在保护模式下,SS寄存器存放<code>段选择符(Segment Selector)</code>运行在保护模式下的程序不能对其进行修改,而<code>ESP寄存器</code>的值通常是指向特定位置的一个<code>32位偏移值</code>,我们很少需要直接操作ESP寄存器,相反的ESP寄存器总是由<code>CALL,RET,PUSH,POP</code>等这类指令间接性的修改.</p>
+<blockquote>
+<p>接着来简单介绍下关于堆栈操作的两个寄存器,CPU系统提供了两个特殊的寄存器用于标识位于系统栈顶端的栈帧.<br>ESP 栈指针寄存器: 栈指针寄存器,其内存放着一个指针,该指针永远指向系统栈最上面一个栈帧的栈顶.<br>EBP 基址指针寄存器: 基址指针寄存器,其内存放着一个指针,该指针永远指向系统栈最上面一个栈帧的底部.</p>
+</blockquote>
+<h3 id="◆堆栈参数传递◆"><a href="#◆堆栈参数传递◆" class="headerlink" title="◆堆栈参数传递◆"></a>◆堆栈参数传递◆</h3><p>在通常情况下ESP是可变的,随着栈的生产而逐渐变小,而EBP寄存器是固定的,只有当函数的调用后,发生入栈操作而改变.</p>
+<blockquote>
+<p>1.在32位系统中,执行<code>PUSH压栈</code>时,<code>堆栈指针自动减4</code>,再将压栈的值复制到堆栈指针所指向的内存地址.<br>2.在32位系统中,执行<code>POP出栈</code>时,从栈顶移走一个值并将其复制给内存或寄存器,然后再将<code>堆栈指针自动加4</code>.<br>3.在32位系统中,执行<code>CALL调用</code>时,CPU会用堆栈保存当前被调用过程的返回地址,直到遇到RET指令再将其弹出.</p>
+</blockquote>
+<p><strong>PUSH/POP指令:</strong> 在32位环境下,分别将数组中的元素<code>100h-300h</code>压入堆栈,并且通过POP将元素反弹出来.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	Array DWORD 100h,200h,300h,400h</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		xor eax,eax</span><br><span class="line">		push eax                      ; push 0</span><br><span class="line">		push DWORD PTR [Array]        ; push 100</span><br><span class="line">		push DWORD PTR [Array+4]      ; push 200</span><br><span class="line">		push DWORD PTR [Array+8]      ; push 300</span><br><span class="line">		pop eax                       ; pop 300</span><br><span class="line">		pop eax                       ; pop 200</span><br><span class="line">		pop eax                       ; pop 100</span><br><span class="line">		pop eax                       ; pop 0</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>PUSHFD/POPFD指令:</strong> PUSHFD在堆栈上压入EFLAGS寄存器的值,POPFD将堆栈的值弹出并送至EFLAGS寄存器.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	SaveFlage DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		pushfd            ; 标识入栈</span><br><span class="line">		pop SaveFlage     ; 弹出并保存到内存</span><br><span class="line"></span><br><span class="line">		push SaveFlage    ; 从内存取出,并入栈</span><br><span class="line">		popfd             ; 恢复到EFLAGS寄存器中</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>PUSHAD/POPAD指令:</strong> 将通用寄存器按照EAX,ECX,EDX,EBX,ESP,EBP,ESI,EDI的顺序压栈保存.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		pushad</span><br><span class="line">		mov eax,1000</span><br><span class="line">		mov ebx,2000</span><br><span class="line">		mov ecx,3000</span><br><span class="line">		mov edx,4000</span><br><span class="line">		popad</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆声明局部变量◆"><a href="#◆声明局部变量◆" class="headerlink" title="◆声明局部变量◆"></a>◆声明局部变量◆</h3><p>高级语言程序中,在单个过程中创建使用和销毁的变量我们称它为<code>局部变量(local variable)</code>,局部变量是在程序运行时,由系统动态的在栈上开辟的,在内存中通常在<code>基址指针(EBP)</code>之下,尽管在汇编时不能给定默认值,但可以在运行时初始化,如下一段伪代码:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MySub</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> var1 = <span class="number">10</span>;</span><br><span class="line">	<span class="keyword">int</span> var2 = <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的一段代码经过C编译器转换后,会变成如下的样子,其中<code>EBP-4</code>必须是4的倍数,因为默认就是4字节存储.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySub PROC</span><br><span class="line">	push ebp                  ; 将EBP存储在栈中</span><br><span class="line">	mov ebp,esp               ; 堆栈框架的基址</span><br><span class="line">	sub esp,8                 ; 创建局部变量空间</span><br><span class="line"></span><br><span class="line">	mov DWORD PTR [ebp-4],10  ; var1 = 10</span><br><span class="line">	mov DWORD PTR [ebp-8],20  ; var2 = 20</span><br><span class="line"></span><br><span class="line">	mov esp,ebp               ; 从堆栈上删除局部变量</span><br><span class="line">	pop ebp                   ; 恢复EBP指针</span><br><span class="line">	ret 8                     ; 返回,清理堆栈</span><br><span class="line">MySub ENDP</span><br></pre></td></tr></table></figure></p>
+<p>如果去掉了上面的<code>mov esp,ebp</code>,那么当执行<code>pop ebp</code>时将会得到EBP等于10,执行RET指令会导致控制转移到内存地址10处执行,从而程序会崩溃.</p>
+<p>为了使代码更加的容易阅读,可以在上面的代码的基础上给每个变量的引用地址都定义一个符号并在代码中使用这些符号来完成编写.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var1_local EQU DWORD PTR [ebp-4]</span><br><span class="line">var2_local EQU DWORD PTR [ebp-8]</span><br><span class="line"></span><br><span class="line">MySub PROC</span><br><span class="line">	push ebp</span><br><span class="line">	mov ebp,esp</span><br><span class="line">	sub esp,8</span><br><span class="line">	mov var1_local,10</span><br><span class="line">	mov var2_local,20</span><br><span class="line">	mov esp,ebp</span><br><span class="line">	pop ebp</span><br><span class="line">	ret 8</span><br><span class="line">MySub ENDP</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆ENTER-LEAVE-伪指令◆"><a href="#◆ENTER-LEAVE-伪指令◆" class="headerlink" title="◆ENTER/LEAVE 伪指令◆"></a>◆ENTER/LEAVE 伪指令◆</h3><p>ENTRE指令自动为被调用过程创建堆栈框架,它为局部变量保留堆栈空间并在堆栈上保存EBP,该指令执行后会执行以下动作.</p>
+<blockquote>
+<p>1.在堆栈上压入EBP(push ebp)<br>2.把EBP设为堆栈框架的基指针(mov ebp,esp)<br>3.为局部变量保留适当的空间(sub esp,numbytes)</p>
+</blockquote>
+<p>ENTER指令有两个参数,第一个操作数是一个常量,用于指定要为局部变量保留多少堆栈空间(numbytes),第二个参数指定过程的嵌套层数,这两个操作数都是立即数,numbytes总是向上取整为4的倍数,以使ESP按照双字边界地址对其.</p>
+<p>比如以下代码,使用ENTER为局部变量保存8字节的堆栈空间:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySub PROC</span><br><span class="line">	enter 8,0</span><br><span class="line">MySub ENDP</span><br></pre></td></tr></table></figure></p>
+<p>经过编译器转换后,会首先转换为以下的样子:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySub PROC</span><br><span class="line">	push ebp</span><br><span class="line">	mov ebp,esp</span><br><span class="line">	sub esp,8</span><br><span class="line">MySub ENDP</span><br></pre></td></tr></table></figure></p>
+<p>上面的代码只有开头没有结尾,如果要使用ENTER指令分配空间的话,则必须在结尾加上LEAVE指令,这样程序才完整.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySub PROC</span><br><span class="line">	enter 8,0</span><br><span class="line">....</span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line">MySub ENDP</span><br></pre></td></tr></table></figure></p>
+<p>下面代码和上面代码作用是相同的,它首先为局部变量保留8字节的堆栈空间然后丢弃.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySub PROC</span><br><span class="line">	push ebp</span><br><span class="line">	mov ebp,esp</span><br><span class="line">	sub esp,8</span><br><span class="line">....</span><br><span class="line">	mov esp,ebp</span><br><span class="line">	pop ebp</span><br><span class="line">	ret</span><br><span class="line">MySub ENDP</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆USES-LOCAL-伪指令◆"><a href="#◆USES-LOCAL-伪指令◆" class="headerlink" title="◆USES/LOCAL 伪指令◆"></a>◆USES/LOCAL 伪指令◆</h3><p><strong>USES操作符:</strong> 该操作符用于指定需要压栈的寄存器,其会自动生成压栈出栈代码无需手动添加.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov eax,1</span><br><span class="line">		mov ebx,2</span><br><span class="line">		mov ecx,3</span><br><span class="line">		call mycall</span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line"></span><br><span class="line">	mycall PROC USES eax ebx ecx     ; 生成压栈代码,自动压eax,ebx,ecx</span><br><span class="line">		xor eax,eax              ; 压栈的寄存器可以随意修改</span><br><span class="line">		xor ebx,ebx              ; 过程结束后会自动恢复这些寄存器</span><br><span class="line">		ret</span><br><span class="line">	mycall ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>LOCAL操作符:</strong> 在过程内声明一个或多个命名局部变量,并赋予相应的尺寸属性,该语句必须紧跟PROC指令后面.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		LOCAL var1:WORD</span><br><span class="line">		LOCAL var2:DWORD,var3:BYTE</span><br><span class="line"></span><br><span class="line">		mov DWORD PTR [var1],1024</span><br><span class="line">		mov eax,DWORD PTR [var1]</span><br><span class="line">		mov [var2],1024            ; DWORD</span><br><span class="line">		mov eax,[var2]</span><br><span class="line">		mov [var3],10              ; BYTE</span><br><span class="line">		mov al,[var3]</span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>局部变量:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	lyshark PROC var1:WORD,var2:DWORD</span><br><span class="line">		LOCAL @loca1:BYTE,@loca2:DWORD</span><br><span class="line">		LOCAL @local_byte[100]:BYTE</span><br><span class="line">		</span><br><span class="line">		mov ax,var1</span><br><span class="line">		mov ebx,@loca2</span><br><span class="line">		</span><br><span class="line">		lea ecx,@local_byte</span><br><span class="line">		mov @local_byte[0],0</span><br><span class="line">		mov @local_byte[1],1</span><br><span class="line">		mov @local_byte[2],2</span><br><span class="line">		mov @local_byte[3],3</span><br><span class="line">	lyshark ENDP</span><br><span class="line"></span><br><span class="line">	main PROC</span><br><span class="line">		invoke lyshark,100,10000</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>LOCAL(申请数组):</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		LOCAL var[3]:DWORD</span><br><span class="line">		</span><br><span class="line">		mov var[0],100</span><br><span class="line">		mov var[1],200</span><br><span class="line">		</span><br><span class="line">		mov eax,var[0]</span><br><span class="line">		mov ebx,var[1]</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		LOCAL ArrayDW[10]:DWORD</span><br><span class="line">		LOCAL ArrayB[10]:BYTE</span><br><span class="line"></span><br><span class="line">		lea eax,[ArrayDW]</span><br><span class="line">		mov [ArrayDW],10</span><br><span class="line">		mov [ArrayDW + 4],20</span><br><span class="line">		mov [ArrayDW + 8],30</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h2 id="过程调用指令"><a href="#过程调用指令" class="headerlink" title="过程调用指令"></a>过程调用指令</h2><p>CALL指令指示处理器在新的内存地址执行指令,当用户调用CALL指令时,该指令会首先将CALL指令的下一条指令的内存地址压入堆栈保存,然后将EIP寄存器修改为CALL指令的调用处,等调用结束后返回从堆栈弹出CALL的下一条指令地址.</p>
+<blockquote>
+<p>1.当遇到CALL指令时,程序会经过计算得到CALL指令的下一条指令的地址,并将其压入堆栈.<br>2.接着会将EIP寄存器的地址指向被调用过程的地址,被调用过程被执行.<br>3.最后过程内部通过RET指令返回,将从堆栈中弹出EIP的地址,程序继续向下执行.<br>4.CALL相当于push+jmp,RET相当于pop+jmp.</p>
+</blockquote>
+<p><strong>普通参数传递:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	sum PROC var1:DWORD,var2:DWORD,var3:DWORD</span><br><span class="line">		mov eax,var1</span><br><span class="line">		mov ebx,var2</span><br><span class="line">		mov ecx,var3</span><br><span class="line">		ret</span><br><span class="line">	sum ENDP</span><br><span class="line"></span><br><span class="line">	main PROC</span><br><span class="line">		invoke sum,10,20,30      ; 调用并传递参数</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>寄存器传递参数:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	sum PROC</span><br><span class="line">		add eax,ebx</span><br><span class="line">		add eax,ecx</span><br><span class="line">		ret</span><br><span class="line">	sum ENDP</span><br><span class="line"></span><br><span class="line">	main PROC</span><br><span class="line">		mov eax,10</span><br><span class="line">		mov ebx,20</span><br><span class="line">		mov ecx,30</span><br><span class="line">		call sum</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>使用PROTO声明:</strong> 如果调用的函数在之后实现, 须用 PROTO 提前声明,否则会报错<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sum PROTO :DWORD,:DWORD,:DWORD ; 函数声明的主要是参数类型,省略参数名</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke sum,10,20,30    ; 现在调用的是之后的函数</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line"></span><br><span class="line">	sum PROC var1,var2,var3</span><br><span class="line">		mov eax,var1</span><br><span class="line">		add eax,var2</span><br><span class="line">		add eax,var3</span><br><span class="line">		ret</span><br><span class="line">	sum ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>CALL/RET指令:</strong> 编写一个过程,实现对整数数组的求和,并将结果保存到EAX寄存器中.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	array DWORD 1000h,2000h,3000h,4000h,5000h</span><br><span class="line">	theSum DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov esi,offset array          ; ESI指向array</span><br><span class="line">		mov ecx,lengthof array        ; ECX=array元素个数</span><br><span class="line">		call ArraySum                 ; 调用求和指令</span><br><span class="line">		mov theSum,eax                ; 将结果保存到内存</span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line"></span><br><span class="line">	ArraySum PROC</span><br><span class="line">		push esi           ; 保存ESI,ECX</span><br><span class="line">		push ecx</span><br><span class="line">		mov eax,0          ; 初始化累加寄存器</span><br><span class="line">	L1:</span><br><span class="line">		add eax,[esi]      ; 每个整数都和EAX中的和相加</span><br><span class="line">		add esi,TYPE DWORD ; 递增指针,继续遍历</span><br><span class="line">		loop L1</span><br><span class="line">		pop ecx            ; 恢复寄存器</span><br><span class="line">		pop esi</span><br><span class="line">		ret</span><br><span class="line">	ArraySum ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p>通过该语句块配合可以生成自定义过程,下面我们创建一个名为<code>Sum</code>的过程,实现<code>EBX+ECX</code>并将结果保存在<code>EAX</code>寄存器中.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	TheSum DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov ebx,100     ; 传递ebx</span><br><span class="line">		mov ecx,100     ; 传递ecx</span><br><span class="line">		call Sum        ; 调用过程</span><br><span class="line">		mov TheSum,eax  ; 保存结果到TheSum</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">	</span><br><span class="line">	Sum PROC</span><br><span class="line">		xor eax,eax</span><br><span class="line">		add eax,ebx</span><br><span class="line">		add eax,ecx</span><br><span class="line">		ret</span><br><span class="line">	Sum ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>INVOKE调用系统API:</strong> 默认情况下,会将返回结果保存在eax寄存器中.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szCaption db &quot;MsgBox&quot;,0</span><br><span class="line">	szText db &quot;这是一个提示框,请点击确定完成交互！&quot;,0</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		.WHILE (1)</span><br><span class="line">			invoke MessageBox,NULL,offset szText,offset szCaption,MB_YESNO</span><br><span class="line">			.break .if(eax == IDYES)</span><br><span class="line">		.ENDW</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>模块化调用:</strong> 首先创建一个<code>sum.asm</code>然后在<code>main.asm</code>中引用sum这个文件中的函数.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">; sum.asm 首先编译这个文件,并将其放入指定目录下</span><br><span class="line">	.386</span><br><span class="line">	.model flat, stdcall</span><br><span class="line">.code</span><br><span class="line">	sum PROC v1, v2, v3</span><br><span class="line">	    mov eax, v1</span><br><span class="line">	    add eax, v2</span><br><span class="line">	    add eax, v3</span><br><span class="line">	    ret</span><br><span class="line">	sum ENDP</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">; main.asm 直接引用编译后的lib文件即可</span><br><span class="line">;这里的引入路径可以是全路径, 这里是相对路径</span><br><span class="line">includelib /masm32/lib/sum.lib</span><br><span class="line"></span><br><span class="line">;子程序声明</span><br><span class="line">sum proto :dword, :dword, :dword</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke sum,10,20,30    ;调用过程</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h2 id="结构与联合"><a href="#结构与联合" class="headerlink" title="结构与联合"></a>结构与联合</h2><p>结构(struct)时逻辑上互相关联的一组变量的模板或模式,结构中的单个变量称为<code>域(field)</code>,程序的语句可以把结构作为一个实体进行访问,也可以对结构的单个域进行访问,结构通常包括不同类型的域,而联合(union)同样也是把多个标识符组合在一起,不过与结构不同的是,联合体共用用一块内存区域,内存的大小取决于联合体中最大的元素.</p>
+<p><strong>引用结构变量:</strong> 通过使用<code>&lt;&gt;,{}</code>均可声明结构体,同时可以初始化,对结构体赋初值.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">;定义结构</span><br><span class="line">MyPoint struct</span><br><span class="line">	pos_x DWORD ?</span><br><span class="line">	pos_y DWORD ?</span><br><span class="line">MyPoint ends</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	;声明结构, 使用 &lt;&gt;、&#123;&#125; 均可</span><br><span class="line">	ptr1 MyPoint &lt;10,20&gt;</span><br><span class="line">	ptr2 MyPoint &#123;30,40&#125;</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		lea edx, ptr1</span><br><span class="line">		mov eax, (MyPoint ptr [edx]).pos_x   ; 此时eax=10</span><br><span class="line">		mov ebx, (MyPoint ptr [edx]).pos_y   ; 此时ebx=20</span><br><span class="line">		mov (MyPoint PTR [edx]).pos_x,100    ; 将100写入MyPoint.pos_x结构中存储</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>结构初始化:</strong> 以下定义了<code>MyStruct</code>结构,并将<code>user2</code>初始化,FName=lyshark,FAge=25.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MyStruct struct</span><br><span class="line">	FName db 20 dup(0)</span><br><span class="line">	FAge db 100</span><br><span class="line">MyStruct ends</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	user1 MyStruct &lt;&gt;</span><br><span class="line">	user2 MyStruct &lt;&apos;lyshark&apos;,25&gt;</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		;lea edx, user1</span><br><span class="line">		;mov eax,DWORD PTR (MyStruct ptr[edx]).FName</span><br><span class="line">		;mov ebx,DWORD PTR (MyStruct ptr[edx]).FAge</span><br><span class="line"></span><br><span class="line">		mov eax,DWORD PTR [user2.FName]   ; eax=lyshark</span><br><span class="line">		mov ebx,DWORD PTR [user2.FAge]    ; ebx=25</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>使用系统结构:</strong> 通过调用<code>GetLocalTime</code>获取系统时间,并存储到<code>SYSTEMTIM</code>结构体中.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	sysTime SYSTEMTIME &lt;&gt;           ; 声明结构体</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetLocalTime,addr sysTime    ; 获取系统时间并放入sysTime</span><br><span class="line">		mov eax,DWORD PTR sysTime.wYear     ; 获取年份</span><br><span class="line">		mov ebx,DWORD PTR sysTime.wMonth    ; 获取月份</span><br><span class="line">		mov ecx,DWORD PTR sysTime.wDay      ; 获取天数</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>结构体的嵌套定义:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MyPT struct</span><br><span class="line">	pt_x DWORD ?</span><br><span class="line">	pt_y DWORD ?</span><br><span class="line">MyPT ends</span><br><span class="line">Rect struct</span><br><span class="line">	Left MyPT &lt;&gt;</span><br><span class="line">	Right MyPT &lt;&gt;</span><br><span class="line">Rect ends</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	LyShark1 Rect &lt;&gt;</span><br><span class="line">	LyShark2 Rect &#123;&lt;10,20&gt;,&lt;100,200&gt;&#125;</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov [LyShark1.Left.pt_x],100</span><br><span class="line">		mov [LyShark1.Left.pt_y],200</span><br><span class="line">		</span><br><span class="line">		mov [LyShark1.Right.pt_x],1000</span><br><span class="line">		mov [LyShark1.Right.pt_y],2000</span><br><span class="line">		mov eax,[LyShark1.Left.pt_x]</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>联合体的声明:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">; 定义联合体</span><br><span class="line">MyUnion union</span><br><span class="line">	My_Dword DWORD ?</span><br><span class="line">	My_Word WORD ?</span><br><span class="line">	My_Byte BYTE ?</span><br><span class="line">MyUnion ends</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	test1 MyUnion &#123;1122h&#125;; ;只能存放初始值</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov eax, [test1.My_Dword]</span><br><span class="line">		mov ax, [test1.My_Word]</span><br><span class="line">		mov al, [test1.My_Byte]</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="关于宏汇编"><a href="#关于宏汇编" class="headerlink" title="关于宏汇编"></a>关于宏汇编</h2><p>宏过程<code>(Macro Procedure)</code>是一个命名的语汇编语句块,一旦定义后,宏过程就可以在程序中被调用任意多次,调用宏过程的时候,宏内的语句块将替换到调用的位置,宏的本质是替换,但像极了子过程,宏可定义在源程序的任意位置,但一般放在.data前面.</p>
+<p><strong>一个简单的宏:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MyCode macro</span><br><span class="line">	xor eax,eax</span><br><span class="line">	xor ebx,ebx</span><br><span class="line">	xor ecx,ecx</span><br><span class="line">	xor edx,edx</span><br><span class="line">endm</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		MyCode   ; 将被替换为上面两行代码</span><br><span class="line">		ret    </span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>一个代替求和函数的宏</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySum macro  var1, var2, var3</span><br><span class="line">	mov eax,var1</span><br><span class="line">	add eax,var2</span><br><span class="line">	add eax,var3</span><br><span class="line">endm</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		MySum 10,20,30</span><br><span class="line">		MySum 10,20,30,40   ; 多余的参数40会被忽略</span><br><span class="line">		ret    </span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>宏参数的默认值:</strong> 通过定义默认值,可以不给默认的变量传递参数.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">; 参数 var1、var2 通过 REQ 标识说明是必备参数</span><br><span class="line">MySum macro  var1:req, var2:req, var3:=&lt;30&gt;    ; var3默认值是30</span><br><span class="line">	mov eax,var1</span><br><span class="line">	add eax,var2</span><br><span class="line">	add eax,var3</span><br><span class="line">endm</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		MySum 10,20</span><br><span class="line">		ret    </span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>使用EXITM终止宏执行:</strong> 可使用关键字exitm 终止宏代码的后面内容.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySum macro</span><br><span class="line">	xor eax,eax</span><br><span class="line">	xor ebx,ebx</span><br><span class="line">	xor ecx,ecx</span><br><span class="line">	exitm        ; 只会清空前三个寄存器,后面的跳过了</span><br><span class="line">	xor edx,edx</span><br><span class="line">	xor esi,esi</span><br><span class="line">endm</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		MySum</span><br><span class="line">		ret    </span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>使用PURGE取消指定宏的展开:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySum macro</span><br><span class="line">	xor eax,eax</span><br><span class="line">	xor ebx,ebx</span><br><span class="line">endm</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		MySum           ; 这个会被展开</span><br><span class="line">		purge MySum     ; 这个不会展开</span><br><span class="line">		MySum           ; 这个宏也不会展开了</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>在宏内使用局部标号:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MyMax macro var1,var2</span><br><span class="line">	LOCAL jump</span><br><span class="line">	</span><br><span class="line">	mov eax,var1</span><br><span class="line">	cmp eax,var2</span><br><span class="line">	jge jump</span><br><span class="line">	xor eax,eax</span><br><span class="line">jump:	ret</span><br><span class="line">endm</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		MyMax 20,10</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>特殊操作符: &amp;、&lt;&gt;、%、!</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&amp;  ;替换操作符</span><br><span class="line">&lt;&gt; ;字符串传递操作符</span><br><span class="line">%  ;表达式操作符, 也用于得到一个变量或常量的值</span><br><span class="line">!  ;转义操作符</span><br><span class="line">;自定义的宏</span><br><span class="line">mPrint macro Text</span><br><span class="line">    PrintText &apos;* &amp;Text&amp; *&apos;</span><br><span class="line">endm</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">main proc</span><br><span class="line">    ;该宏会把参数直接替换过去</span><br><span class="line">    mPrint 1234    ;* 1234 *</span><br><span class="line">    </span><br><span class="line">    ;要保证参数的完整应该使用 &lt;&gt;</span><br><span class="line">    mPrint 12,34   ;* 12 *</span><br><span class="line">    mPrint &lt;12,34&gt; ;* 12,34 *</span><br><span class="line">    </span><br><span class="line">    ;需要计算结果应该使用 %()</span><br><span class="line">    mPrint 34+12   ;* 34+12 *</span><br><span class="line">    mPrint %(34+12)   ;* 46 *</span><br><span class="line">    </span><br><span class="line">    ;用到 &amp;、&lt;、&gt;、%、! 应该使用 ! 转义</span><br><span class="line">    mPrint 10 !% 2 = %(10/2)!! ;* 10 % 2 = 5! *</span><br><span class="line">    ret</span><br><span class="line">main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="过程小例子"><a href="#过程小例子" class="headerlink" title="过程小例子"></a>过程小例子</h2><p><strong>整数求和:</strong> 通过使用汇编语言实现一个整数求和的小例子.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	String WORD 100h,200h,300h,400h,500h</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		;lea edi,String           ; 取String数组的基址</span><br><span class="line">		mov edi,offset String     ; 同上,两种方式均可</span><br><span class="line">		mov ecx,lengthof String   ; 取数组中的数据个数</span><br><span class="line">		mov ax,0                  ; 累加器清零</span><br><span class="line">	L1:</span><br><span class="line">		add ax,[edi]              ; 加上一个整数</span><br><span class="line">		add edi,TYPE String       ; 指向下一个数组元素,type(2byte)</span><br><span class="line">		loop L1</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>正向复制字符串:</strong> 使用汇编语言实现字符串的复制,将数据从<code>source</code>复制到<code>target</code>内存中.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	source BYTE &quot;hello lyshark welcome&quot;,0h</span><br><span class="line">	target BYTE SIZEOF source DUP(0),0h       ; 取源地址数据大小</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov esi,0                  ; 使用变址寄存器</span><br><span class="line">		mov ecx,sizeof source      ; 循环计数器</span><br><span class="line">	L1:</span><br><span class="line">		mov al,source[esi]         ; 从源地址中取一个字符</span><br><span class="line">		mov target[esi],al         ; 将该字符存储在目标地址中</span><br><span class="line">		inc esi                    ; 递增,将指针移动到下一个字符</span><br><span class="line">		loop L1</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>反向复制字符串:</strong> 使用汇编语言实现字符串的复制,将数据从<code>source</code>复制到<code>target</code>内存中且反向存储数据.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	source BYTE &quot;hello lyshark welcome&quot;,0h</span><br><span class="line">	target BYTE SIZEOF source DUP(0),0h</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov esi,sizeof source</span><br><span class="line">		mov ecx,sizeof source</span><br><span class="line">		mov ebx,0</span><br><span class="line">	L1:</span><br><span class="line">		mov al,source[esi]</span><br><span class="line">		mov target[ebx],al</span><br><span class="line">		dec esi</span><br><span class="line">		inc ebx</span><br><span class="line">		loop L1</span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看内存与寄存器:</strong> 通过调用<code>DumpMem/DumpRegs</code>显示内存与寄存器的快照.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	array DWORD 1,2,3,4,5,6,7,8,9,0ah,0bh</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov esi,offset array       ; 设置内存起始地址</span><br><span class="line">		mov ecx,lengthof array     ; 设置元素数据,偏移</span><br><span class="line">		mov ebx,type array         ; 设置元素尺寸(1=byte,2=word,4=dword)</span><br><span class="line">		call DumpMem               ; 调用内存查询子过程</span><br><span class="line">		call DumpRegs              ; 调用查询寄存器子过程</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>汇编实现性能度量:</strong> 通过调用库函数,实现对指定代码执行的性能度量.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	StartTime DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line"></span><br><span class="line">		call GetMseconds       ; 调用区本地时间过程</span><br><span class="line">		mov StartTime,eax      ; 将返回值赋值给StartTime</span><br><span class="line"></span><br><span class="line">		mov ecx,10             ; 通过调用延时过程,模拟程序的执行</span><br><span class="line">	L1:</span><br><span class="line">		mov eax,1000           ; 指定延时1s=1000ms</span><br><span class="line">		call Delay             ; 调用延时过程</span><br><span class="line">		loop L1</span><br><span class="line"></span><br><span class="line">		call GetMseconds       ; 再次调用本地时间过程</span><br><span class="line">		sub eax,StartTime      ; 结束时间减去开始时间</span><br><span class="line">		call WriteDec          ; 以十进制形式输出eax寄存器的值</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>字符输出:</strong> <code>WriteString(字符串)</code>,<code>WriteInt(整数)</code>,<code>WriteHex(16进制)</code>,<code>WriteChar(字符)</code>,<code>WriteDec(10进制)</code>.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	Message BYTE &quot;Input String:&quot;,0h</span><br><span class="line">	String DWORD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		; 设置控制台背景颜色</span><br><span class="line">		mov eax,yellow +(blue*16)     ; 设置为蓝底黄字</span><br><span class="line">		call SetTextColor             ; 调用设置过程</span><br><span class="line">		call Clrscr                   ; 清除屏幕,clear</span><br><span class="line"></span><br><span class="line">		; 提示用户一段话</span><br><span class="line">		mov edx,offset Message        ; 指定输出的文字</span><br><span class="line">		call WriteString              ; 调用回写过程</span><br><span class="line">		call Crlf                     ; 调用回车</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>字符输入:</strong> <code>ReadString(字符串)</code>,<code>ReadInt(整数)</code>,<code>ReadHex(16进制)</code>,<code>ReadChar(字符)</code>,<code>ReadDec(10进制)</code>.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	Buffer BYTE 21 DUP(0)          ; 输入缓冲区</span><br><span class="line">	ByteCount DWORD ?              ; 存放计数器      </span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov edx,offset Buffer      ; 指向缓冲区指针</span><br><span class="line">		mov ecx,sizeof Buffer      ; 指定最多读取的字符数</span><br><span class="line">		call ReadString            ; 读取输入字符串</span><br><span class="line">		mov ByteCount,eax          ; 保存读取的字符数</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>生成伪随机数:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov ecx,5           ; 循环生成5个随机数</span><br><span class="line">	L1:</span><br><span class="line">		call Random32       ; 生成随机数</span><br><span class="line">		call WriteDec       ; 以十进制显示</span><br><span class="line">		mov al,TAB          ; 水平制表符</span><br><span class="line">		call WriteChar      ; 显示水平制表符</span><br><span class="line">		loop L1</span><br><span class="line">		call Crlf           ; 回车</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>生成自定义随机数:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov ecx,5           ; 循环生成5个随机数</span><br><span class="line">	L1:</span><br><span class="line">		mov eax,100         ; 0-99之间</span><br><span class="line">		call RandomRange    ; 生成随机数</span><br><span class="line">		sub eax,50          ; 范围在-50-49</span><br><span class="line">		call WriteInt       ; 十进制输出</span><br><span class="line">		mov al,TAB</span><br><span class="line">		call WriteChar      ; 输出制表符</span><br><span class="line">		loop L1</span><br><span class="line">		call Crlf           ; 回车</span><br><span class="line"></span><br><span class="line">		push 0</span><br><span class="line">		call ExitProcess</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+
+      
+    </div>
+
+    
+
+<!--增加的底部版权代码-->
+<div>
+      
+        ﻿
+<br>
+<div class="my_post_copyright">
+  <p><span>文章作者:</span><a href="/" title="访问 王瑞 的个人博客">王瑞</a></p>
+  <p><span>发布时间:</span>2019年04月18日 - 13:04</p>
+  <p><span>原始链接:</span><a href="/2019/04/18/汇编与反汇编/Win32汇编过程与宏-3/" title="Win32汇编过程与宏(3)">https://localhost/2019/04/18/汇编与反汇编/Win32汇编过程与宏-3/</a>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者</p>
+</div>
+
+      
+</div>
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/汇编与反汇编/" rel="tag"> <i class="fa fa-tag"></i> 汇编与反汇编</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/汇编与反汇编/Win32汇编算数运算-2/" rel="next" title="Win32汇编算数指令(2)">
+                <i class="fa fa-chevron-left"></i> Win32汇编算数指令(2)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/19/汇编与反汇编/Win32汇编其他指令-4/" rel="prev" title="Win32汇编其他指令(4)">
+                Win32汇编其他指令(4) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="王瑞">
+            
+              <p class="site-author-name" itemprop="name">王瑞</p>
+              <div class="site-description motion-element" itemprop="description">记录点滴技术成长之路</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">80</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/lyshark" title="GitHub &rarr; https://github.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="mailto:1181506874@qq.com" title="E-Mail &rarr; mailto:1181506874@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://plus.google.com/lyshark" title="Google &rarr; https://plus.google.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-google"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/lyshark" title="Twitter &rarr; https://twitter.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="http://wpa.qq.com/msgrd?v=3&uin=1181506874&site=hupaiyule&menu=yes" title="QQ &rarr; http://wpa.qq.com/msgrd?v=3&uin=1181506874&site=hupaiyule&menu=yes" rel="noopener" target="_blank"><i class="fa fa-fw fa-qq"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://weixin.qq.com" title="Wechat &rarr; https://weixin.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-weixin"></i></a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#堆栈操作指令"><span class="nav-text">堆栈操作指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#◆堆栈参数传递◆"><span class="nav-text">◆堆栈参数传递◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆声明局部变量◆"><span class="nav-text">◆声明局部变量◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆ENTER-LEAVE-伪指令◆"><span class="nav-text">◆ENTER/LEAVE 伪指令◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆USES-LOCAL-伪指令◆"><span class="nav-text">◆USES/LOCAL 伪指令◆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过程调用指令"><span class="nav-text">过程调用指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结构与联合"><span class="nav-text">结构与联合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于宏汇编"><span class="nav-text">关于宏汇编</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过程小例子"><span class="nav-text">过程小例子</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+
+<!-- 屏蔽版权开始 -->
+&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王瑞</span>
+<!-- 屏蔽版权结束 -->
+	 | 页面托管于 GitHub/Coding 主机
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+<script type="text/javascript" src="/js/coloured.js"></script>
+
+
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/poi.model.json"},"display":{"superSample":2,"width":300,"height":290,"position":"left","hOffset":0,"vOffset":-10},"mobile":{"show":true,"scale":0},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

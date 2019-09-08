@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next gemini" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"slideUpIn","post_header":"slideUpIn","post_body":"slideUpIn","coll_header":"slideUpIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="防火墙（Firewall）也称防护墙，是由Check Point创立者Gil Shwed于1993年发明并引入国际互联网（US5606668（A）1993-12-15）防火墙是位于内部网和外部网之间的屏障，它按照系统管理员预先定义好的规则来控制数据包的进出。防火墙是系统的第一道防线，其作用是防止非法用户的进入。">
+<meta name="keywords" content="网络设备配置,huawei">
+<meta property="og:type" content="article">
+<meta property="og:title" content="华为防火墙配置笔记">
+<meta property="og:url" content="https://localhost/2019/04/11/网络设备配置/华为防火墙配置笔记/index.html">
+<meta property="og:site_name" content="哔哩哔">
+<meta property="og:description" content="防火墙（Firewall）也称防护墙，是由Check Point创立者Gil Shwed于1993年发明并引入国际互联网（US5606668（A）1993-12-15）防火墙是位于内部网和外部网之间的屏障，它按照系统管理员预先定义好的规则来控制数据包的进出。防火墙是系统的第一道防线，其作用是防止非法用户的进入。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://localhost/picture/20190423164101.jpg">
+<meta property="og:image" content="https://localhost/picture/20190424094023.jpg">
+<meta property="og:image" content="https://localhost/picture/20190424174537.jpg">
+<meta property="og:image" content="https://localhost/picture/20190424174539.jpg">
+<meta property="og:image" content="https://localhost/picture/20190508150335.jpg">
+<meta property="og:updated_time" content="2019-05-30T09:57:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="华为防火墙配置笔记">
+<meta name="twitter:description" content="防火墙（Firewall）也称防护墙，是由Check Point创立者Gil Shwed于1993年发明并引入国际互联网（US5606668（A）1993-12-15）防火墙是位于内部网和外部网之间的屏障，它按照系统管理员预先定义好的规则来控制数据包的进出。防火墙是系统的第一道防线，其作用是防止非法用户的进入。">
+<meta name="twitter:image" content="https://localhost/picture/20190423164101.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="哔哩哔" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://localhost/2019/04/11/网络设备配置/华为防火墙配置笔记/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>华为防火墙配置笔记 | 哔哩哔</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">哔哩哔</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://localhost/2019/04/11/网络设备配置/华为防火墙配置笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王瑞">
+      <meta itemprop="description" content="记录点滴技术成长之路">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="哔哩哔">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">华为防火墙配置笔记
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-11 10:42:41" itemprop="dateCreated datePublished" datetime="2019-04-11T10:42:41+08:00">2019-04-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-30 17:57:06" itemprop="dateModified" datetime="2019-05-30T17:57:06+08:00">2019-05-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/网络设备配置/" itemprop="url" rel="index"><span itemprop="name">网络设备配置</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>防火墙（Firewall）也称防护墙，是由Check Point创立者Gil Shwed于1993年发明并引入国际互联网（US5606668（A）1993-12-15）防火墙是位于内部网和外部网之间的屏障，它按照系统管理员预先定义好的规则来控制数据包的进出。防火墙是系统的第一道防线，其作用是防止非法用户的进入。</p>
+<a id="more"></a>
+<p><br></p>
+<h2 id="初始化防火墙"><a href="#初始化防火墙" class="headerlink" title="初始化防火墙"></a>初始化防火墙</h2><p><strong>初始化防火墙:</strong> 默认用户名为<code>admin</code>,默认的密码<code>Admin@123</code>,这里修改密码为<code>LyShark@163</code>.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Username:admin</span><br><span class="line">Password:*****</span><br><span class="line">The password needs to be changed. Change now? [Y/N]: y</span><br><span class="line">Please enter old password: Admin@123</span><br><span class="line">Please enter new password: LyShark@163</span><br><span class="line">Please confirm new password: LyShark@163</span><br><span class="line"></span><br><span class="line">&lt;FW1&gt; system-view                      // 进入系统视图</span><br><span class="line">[FW1] sysname FW1                      // 给防火墙命名</span><br><span class="line">[FW1] undo info-center enable          // 关闭日志弹出功能</span><br><span class="line">[FW1] quit</span><br><span class="line">&lt;FW1&gt; language-mode Chinese            // 将提示修改为中文</span><br><span class="line">Change language mode, confirm? [Y/N] y</span><br><span class="line">提示：改变语言模式成功.</span><br></pre></td></tr></table></figure></p>
+<p><strong>开启Web管理界面:</strong> 默认防火墙console接口IP地址是192.168.0.1.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;FW1&gt; system-view</span><br><span class="line">[FW1] web-manager enable                                // 开启图形管理界面</span><br><span class="line">[FW1] interface GigabitEthernet 0/0/0</span><br><span class="line">[FW1-GigabitEthernet0/0/0] ip address 192.168.0.1 24    // 给接口配置IP地址</span><br><span class="line">[FW1-GigabitEthernet0/0/0] service-manage all permit    // 放行该端口的请求</span><br><span class="line">[FW1-GigabitEthernet0/0/0] display this</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置Console口登陆:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;FW1&gt; system-view                                               // 进入系统视图</span><br><span class="line">[FW1] user-interface console 0                                  // 进入console0的用户配置接口</span><br><span class="line">[FW1-ui-console0] authentication-mode password                  // 使用密码验证模式</span><br><span class="line">[FW1-ui-console0] set authentication password cipher Admin1234  // 设置密码为Admin1234</span><br><span class="line">[FW1-ui-console0] quit                                          // 退出用户配置接口</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置telnet密码认证:</strong> 配置密码认证模式,此处配置密码为<code>Admin@123</code>.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;FW1&gt; system-view</span><br><span class="line"></span><br><span class="line">[FW1] telnet server enable                              // 开启Telnet支持</span><br><span class="line">[FW1] interface GigabitEthernet 0/0/0                   // 选择配置接口</span><br><span class="line">[FW1-GigabitEthernet0/0/0] service-manage telnet permit // 允许telnet</span><br><span class="line">[FW1-GigabitEthernet0/0/0] quit</span><br><span class="line"></span><br><span class="line">[FW1] user-interface vty 0 4                                  // 开启虚拟终端</span><br><span class="line">[FW1-ui-vty0-4] protocol inbound telnet                       // 允许telnet</span><br><span class="line">[FW1-ui-vty0-4] authentication-mode password                  // 设置为密码认证模式</span><br><span class="line">[FW1-ui-vty0-4] set authentication password cipher Admin@123  // 设置用户密码</span><br><span class="line"></span><br><span class="line">[USG6000V1] firewall zone trust                                // 选择安全区域</span><br><span class="line">[USG6000V1-zone-trust] add interface GE0/0/0                   // 添加到安全区域</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置telnet用户名密码认证:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;FW1&gt; system-view                                       // 进入系统视图</span><br><span class="line">[FW1] interface GigabitEthernet 0/0/0                   // 进入接口配置</span><br><span class="line">[FW1-GigabitEthernet0/0/0] ip address 192.168.0.1 24    // 配置接口IP</span><br><span class="line">[FW1-GigabitEthernet0/0/0] service-manage telnet permit // 允许telnet</span><br><span class="line">[FW1-GigabitEthernet0/0/0] service-manage ping permit   // 允许ping</span><br><span class="line">[FW1-GigabitEthernet0/0/0] quit                         //退出</span><br><span class="line"></span><br><span class="line">[FW1] firewall zone trust                              // 进入trust安全域配置</span><br><span class="line">[FW1-zone-trust] add interface GigabitEthernet 0/0/0   // 把GE0/0/0加入到trust安全域</span><br><span class="line">[FW1-zone-trust] quit</span><br><span class="line"></span><br><span class="line">[FW1] telnet server enable                // 启用telnet服务</span><br><span class="line">[FW1] user-interface vty 0 4              // 进入vty0-4的用户配置接口</span><br><span class="line">[FW1-ui-vty0-4] authentication-mode aaa   // 使用AAA验证模式</span><br><span class="line">[FW1-ui-vty0-4] user privilege level 3    // 配置用户访问的命令级别为3</span><br><span class="line">[FW1-ui-vty0-4] protocol inbound telnet   // 配置telnet</span><br><span class="line">[FW1-ui-vty0-4] quit                      // 退出用户配置接口</span><br><span class="line"></span><br><span class="line">[FW1] aaa                                 // 进入AAA配置视图</span><br><span class="line">[FW1-aaa] manager-user lyshark            // 创建用户vtyadmin</span><br><span class="line">[FW1-aaa-manager-user-lyshark] password cipher admin@123   // 配置用户密码</span><br><span class="line">[FW1-aaa-manager-user-lyshark] service-type telnet         // 配置服务类型</span><br><span class="line">[FW1-aaa-manager-user-lyshark] quit                        // 退出</span><br><span class="line"></span><br><span class="line">[FW1-aaa] bind manager-user lyshark role system-admin     // 绑定管理员角色</span><br><span class="line">[FW1-aaa] quit                                             // 退出AAA视图</span><br></pre></td></tr></table></figure></p>
+<p><strong>常用查询命令:</strong> 查询防火墙的其他配置,常用的几个命令如下.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1] display ip interface brief            // 查默认接口信息</span><br><span class="line">[FW1] display ip routing-table              // 显示路由表</span><br><span class="line">[FW1] display zone                          // 显示防火墙区域</span><br><span class="line">[FW1] display firewall session table        // 显示当前会话</span><br><span class="line">[FW1] display security-policy rule all      // 显示安全策略</span><br></pre></td></tr></table></figure></p>
+<p>配置到这里,我们就可以在浏览器中访问了,其访问地址是<code>http://192.168.0.1</code><br><br></p>
+<h2 id="防火墙基本配置"><a href="#防火墙基本配置" class="headerlink" title="防火墙基本配置"></a>防火墙基本配置</h2><p><img src="/picture/20190423164101.jpg" alt="blockchain"></p>
+<p><strong>初始化防火墙:</strong> 初始化配置,并设置好防火墙密码,此处用户名<code>admin</code>密码是<code>Lyshark@123</code>.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Username:admin</span><br><span class="line">Password:*****</span><br><span class="line">The password needs to be changed. Change now? [Y/N]: y</span><br><span class="line">Please enter old password: Admin@123</span><br><span class="line">Please enter new password: Lyshark@163</span><br><span class="line">Please confirm new password: Lyshark@163</span><br><span class="line"></span><br><span class="line">&lt;USG6000V1&gt; system-view                                 // 进入系统视图</span><br><span class="line">[USG6000V1] sysname FW1                                 // 给防火墙命名</span><br><span class="line">[FW1] undo info-center enable                           // 关闭日志弹出功能</span><br><span class="line">[FW1] quit</span><br><span class="line">&lt;FW1&gt; language-mode Chinese                             // 将提示修改为中文</span><br><span class="line">[FW1] web-manager enable                                // 开启图形管理界面</span><br><span class="line">[FW1] interface GigabitEthernet 0/0/0</span><br><span class="line">[FW1-GigabitEthernet0/0/0] service-manage all permit    // 放行该端口的请求</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置内网接口:</strong> 配置内网的接口信息,这里包括个<code>GE 1/0/0 and GE 1/0/1</code>这两个内网地址.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;FW1&gt; system-view</span><br><span class="line">[FW1] interface GigabitEthernet 1/0/0</span><br><span class="line">[FW1-GigabitEthernet1/0/0] ip address 192.168.1.1 255.255.255.0</span><br><span class="line">[FW1-GigabitEthernet1/0/0] undo shutdown</span><br><span class="line">[FW1-GigabitEthernet1/0/0] quit</span><br><span class="line"></span><br><span class="line">[FW1] interface GigabitEthernet 1/0/1</span><br><span class="line">[FW1-GigabitEthernet1/0/1] ip address 192.168.2.1 255.255.255.0</span><br><span class="line">[FW1-GigabitEthernet1/0/1] undo shutdown</span><br><span class="line">[FW1-GigabitEthernet1/0/1] quit</span><br><span class="line"></span><br><span class="line"># -------------------------------------------------------</span><br><span class="line">[FW1] firewall zone trust                                       // 将前两个接口加入trust区域</span><br><span class="line">[FW1-zone-trust] add interface GigabitEthernet  1/0/0</span><br><span class="line">[FW1-zone-trust] add interface GigabitEthernet  1/0/1</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置外网接口:</strong> 配置外网接口<code>GE 1/0/2</code>接口的IP地址,并将其加入到<code>untrust区域</code>中.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1] interface GigabitEthernet 1/0/2                            // 选择外网接口</span><br><span class="line">[FW1-GigabitEthernet1/0/2] undo shutdown                         // 开启外网接口</span><br><span class="line">[FW1-GigabitEthernet1/0/2] ip address 10.10.10.10 255.255.255.0  // 配置IP地址</span><br><span class="line">[FW1-GigabitEthernet1/0/2] gateway 10.10.10.20                   // 配置网关</span><br><span class="line">[FW1-GigabitEthernet1/0/2] undo service-manage enable</span><br><span class="line">[FW1-GigabitEthernet1/0/2] quit</span><br><span class="line"></span><br><span class="line"># -------------------------------------------------------</span><br><span class="line">[FW1] firewall zone untrust                                      // 选择外网区域</span><br><span class="line">[FW1-zone-untrust] add interface GigabitEthernet 1/0/2           // 将接口加入到此区域</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置安全策略:</strong> 配置防火墙安全策略,放行<code>trust(内网)--&gt;untrust(外网)</code>的数据包.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1] security-policy                                         // 配置安全策略</span><br><span class="line">[FW1-policy-security] rule name lyshark                       // 规则名称</span><br><span class="line">[FW1-policy-security-rule-lyshark] source-zone trust          // 原安全区域(内部)</span><br><span class="line">[FW1-policy-security-rule-lyshark] destination-zone untrust   // 目标安全区域(外部)</span><br><span class="line"></span><br><span class="line">[FW1-policy-security-rule-lyshark] source-address any         // 原地址区域</span><br><span class="line">[FW1-policy-security-rule-lyshark] destination-address any    // 目标地址区域</span><br><span class="line">[FW1-policy-security-rule-lyshark] service any                // 放行所有服务</span><br><span class="line">[FW1-policy-security-rule-lyshark] action permit              // 放行配置</span><br><span class="line">[FW1-policy-security-rule-lyshark] quit</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置源NAT:</strong> 配置原NAT地址转换,仅配置源地址访问<code>内网 --&gt; 公网</code>的转换.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1] nat-policy                                                      // 配置NAT地址转换</span><br><span class="line">[FW1-policy-nat] rule name lyshark                                    // 指定策略名称</span><br><span class="line">[FW1-policy-nat-rule-lyshark] egress-interface GigabitEthernet 1/0/2  // 外网接口IP</span><br><span class="line">[FW1-policy-nat-rule-lyshark] action source-nat easy-ip               // 源地址转换</span><br><span class="line">[FW1-policy-nat-rule-lyshark] display this</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置目标NAT:</strong> 外网访问<code>10.10.10.10</code>自动映射到内网的<code>192.168.2.1</code>这台主机上.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1] firewall zone untrust                                      // 选择外网区域</span><br><span class="line">[FW1-zone-untrust] add interface GigabitEthernet 1/0/2           // 将接口加入到此区域</span><br><span class="line"></span><br><span class="line"># ----NAT规则---------------------------------------------------</span><br><span class="line"># 外网主机访问10.10.10.10主机自动映射到内部的192.168.2.2</span><br><span class="line">[FW1] firewall detect ftp</span><br><span class="line">[FW1] nat server lyshark global 10.10.10.10 inside 192.168.2.2 no-reverse</span><br><span class="line"></span><br><span class="line"># ----放行规则---------------------------------------------------</span><br><span class="line">[FW1] security-policy                                         // 配置安全策略</span><br><span class="line">[FW1-policy-security] rule name untrs-trs                     // 规则名称</span><br><span class="line">[FW1-policy-security-rule-lyshark] source-zone untrust        // 原安全区域(外部)</span><br><span class="line">[FW1-policy-security-rule-lyshark] destination-zone trust     // 目标安全区域(内部)</span><br><span class="line">[FW1-policy-security-rule-lyshark] action permit              // 放行配置</span><br><span class="line">[FW1-policy-security-rule-lyshark] quit</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="NAT-地址转换"><a href="#NAT-地址转换" class="headerlink" title="NAT 地址转换"></a>NAT 地址转换</h2><p><img src="/picture/20190424094023.jpg" alt="blockchain"></p>
+<p><strong>配置内网区域:</strong> 分别配置防火墙内网接口<code>GE1/0/0 and GE1/0/1</code>设置IP地址,并加入指定区域内.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;FW1&gt;system-view</span><br><span class="line">[FW1]undo info-center enable</span><br><span class="line"></span><br><span class="line"># ----配置IP地址-----------------------------------------------</span><br><span class="line">[FW1] interface GigabitEthernet 1/0/0</span><br><span class="line">[FW1-GigabitEthernet1/0/0] ip address 192.168.1.1 24</span><br><span class="line">[FW1-GigabitEthernet1/0/0] quit</span><br><span class="line">[FW1] interface GigabitEthernet 1/0/1</span><br><span class="line">[FW1-GigabitEthernet1/0/1] ip address 192.168.2.1 24</span><br><span class="line">[FW1-GigabitEthernet1/0/1] quit</span><br><span class="line"></span><br><span class="line"># ----加入到指定区域--------------------------------------------</span><br><span class="line">[FW1] firewall zone trust</span><br><span class="line">[FW1-zone-trust] add interface GigabitEthernet 1/0/0</span><br><span class="line"></span><br><span class="line">[FW1] firewall zone dmz</span><br><span class="line">[FW1-zone-dmz] add interface GigabitEthernet 1/0/1</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置外网区域:</strong> 然后配置外网地址,将<code>Gig 1/0/2</code>加入到untrust区域内.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1] interface GigabitEthernet 1/0/2</span><br><span class="line">[FW1-GigabitEthernet1/0/2] ip address 10.10.10.10 8</span><br><span class="line"></span><br><span class="line">[FW1] firewall zone untrust</span><br><span class="line">[FW1-zone-dmz] add interface GigabitEthernet 1/0/2</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置源NAT:</strong> 配置原NAT地址转换,仅配置源地址访问<code>内网 --&gt; 公网</code>的转换.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ----配置源NAT转换---------------------------------------------</span><br><span class="line">[FW1] nat-policy                                                      // 配置NAT地址转换</span><br><span class="line">[FW1-policy-nat] rule name lyshark                                    // 指定策略名称</span><br><span class="line">[FW1-policy-nat-rule-lyshark] egress-interface GigabitEthernet 1/0/2  // 外网接口IP</span><br><span class="line">[FW1-policy-nat-rule-lyshark] action source-nat easy-ip               // 源地址转换</span><br><span class="line">[FW1-policy-nat-rule-lyshark] display this</span><br><span class="line"></span><br><span class="line"># ----放行相关安全策略------------------------------------------</span><br><span class="line">[FW1] security-policy</span><br><span class="line">[FW1-policy-security] rule name trust_untrust</span><br><span class="line">[FW1-policy-security-rule] source-zone trust</span><br><span class="line">[FW1-policy-security-rule] destination-zone untrust</span><br><span class="line">[FW1-policy-security-rule] action permit</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置目标NAT:</strong> 外网访问<code>10.10.10.10</code>自动映射到内网的<code>192.168.2.2</code>这台主机上.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ----NAT规则---------------------------------------------------</span><br><span class="line"># 外网主机访问10.10.10.10主机自动映射到内部的192.168.2.2</span><br><span class="line">[FW1] firewall detect ftp</span><br><span class="line">[FW1]nat server lyshark global 10.10.10.10 inside 192.168.2.2 no-reverse </span><br><span class="line"></span><br><span class="line"># ----放行规则---------------------------------------------------</span><br><span class="line">[FW1] security-policy                                           // 配置安全策略</span><br><span class="line">[FW1-policy-security] rule name untrs-DMZ                       // 规则名称</span><br><span class="line">[FW1-policy-security-rule-untrs-DMZ] source-zone untrust        // 原安全区域(外部)</span><br><span class="line">[FW1-policy-security-rule-untrs-DMZ] destination-zone trust     // 目标安全区域(内部)</span><br><span class="line">[FW1-policy-security-rule-untrs-DMZ] destination-address 192.168.2.2 24</span><br><span class="line">[FW1-policy-security-rule-untrs-DMZ] service any</span><br><span class="line">[FW1-policy-security-rule-untrs-DMZ] action permit              // 放行配置</span><br><span class="line">[FW1-policy-security-rule-untrs-DMZ] quit</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="配成交换机"><a href="#配成交换机" class="headerlink" title="配成交换机"></a>配成交换机</h2><p><img src="/picture/20190424174537.jpg" alt="blockchain"></p>
+<p><strong>配置两台交换机:</strong> 分别配置两台交换机,并划分到相应的VLAN区域内.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ----配置LSW1交换机--------------------------------------------</span><br><span class="line">&lt;Huawei&gt; system-view</span><br><span class="line">[LSW1] vlan 10                                     // 创建VLAN10</span><br><span class="line">[LSW1] quit</span><br><span class="line">[LSW1] interface Ethernet 0/0/1                    // 将该接口配置为trunk</span><br><span class="line">[LSW1-Ethernet0/0/1] port link-type trunk</span><br><span class="line">[LSW1-Ethernet0/0/1] port trunk allow-pass vlan 10 // 加入到vlan 10</span><br><span class="line">[LSW1-Ethernet0/0/1] quit</span><br><span class="line"></span><br><span class="line">[LSW1] port-group group-member Eth0/0/2 to Eth0/0/3</span><br><span class="line">[LSW1-port-group] port link-type access</span><br><span class="line">[LSW1-port-group] port default vlan 10</span><br><span class="line">[LSW1-port-group] quit</span><br><span class="line"></span><br><span class="line"># ----配置LSW2交换机--------------------------------------------</span><br><span class="line">&lt;Huawei&gt; system-view</span><br><span class="line">[LSW2] vlan 20</span><br><span class="line">[LSW1] quit</span><br><span class="line"></span><br><span class="line">[LSW2] interface Ethernet 0/0/1</span><br><span class="line">[LSW2-Ethernet0/0/1] port link-type trunk</span><br><span class="line">[LSW2-Ethernet0/0/1] port trunk allow-pass vlan 20</span><br><span class="line">[LSW2-Ethernet0/0/1] quit</span><br><span class="line"></span><br><span class="line">[LSW2] port-group group-member Eth0/0/2 to Eth0/0/3</span><br><span class="line">[LSW2-port-group] port link-type access</span><br><span class="line">[LSW2-port-group] port default vlan 20</span><br><span class="line">[LSW2-port-group] quit</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置防火墙:</strong> 配置<code>Gig1/0/0和Gig1/0/1</code>接口为trunk模式,并分别配置好网关地址.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1] vlan 10</span><br><span class="line">[FW1-vlan10] quit</span><br><span class="line">[FW1] vlan 20</span><br><span class="line">[FW1-vlan20] quit</span><br><span class="line"></span><br><span class="line"># ----配置防火墙接口地址-----------------------------------------</span><br><span class="line">[FW1] interface GigabitEthernet 1/0/0</span><br><span class="line">[FW1-GigabitEthernet1/0/0] portswitch</span><br><span class="line">[FW1-GigabitEthernet1/0/0] port link-type trunk</span><br><span class="line">[FW1-GigabitEthernet1/0/0] port trunk allow-pass vlan 10</span><br><span class="line"></span><br><span class="line">[FW1] interface GigabitEthernet 1/0/1</span><br><span class="line">[FW1-GigabitEthernet1/0/1] portswitch</span><br><span class="line">[FW1-GigabitEthernet1/0/1] port link-type trunk</span><br><span class="line">[FW1-GigabitEthernet1/0/1] port trunk allow-pass vlan 20</span><br><span class="line"></span><br><span class="line"># ----分别给VLAN配置IP地址---------------------------------------</span><br><span class="line">[FW1]interface Vlanif 10</span><br><span class="line">[FW1-Vlanif10]</span><br><span class="line">[FW1-Vlanif10]ip address 192.168.10.1 255.255.255.0</span><br><span class="line">[FW1-Vlanif10]alias vlan 10</span><br><span class="line">[FW1-Vlanif10]service-manage ping permit</span><br><span class="line"></span><br><span class="line">[FW1] interface Vlanif 20</span><br><span class="line">[FW1-Vlanif20]</span><br><span class="line">[FW1-Vlanif20] ip address 192.168.20.1 255.255.255.0</span><br><span class="line">[FW1-Vlanif20] alias vlan 20</span><br><span class="line">[FW1-Vlanif20] service-manage ping permit</span><br></pre></td></tr></table></figure></p>
+<p><strong>添加防火墙区域:</strong> 将vlan10和vlan20添加到trust区域内.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1]firewall zone trust</span><br><span class="line">[FW1-zone-trust] add interface Vlanif 10</span><br><span class="line">[FW1-zone-trust] add interface Vlanif 20</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="主备双机热备"><a href="#主备双机热备" class="headerlink" title="主备双机热备"></a>主备双机热备</h2><p><img src="/picture/20190424174539.jpg" alt="blockchain"></p>
+<p><strong>放行所有数据包(两台墙):</strong> 为了演示实验,需要手动放行数据包<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 将默认防火墙规则,设置为允许所有</span><br><span class="line">[FW1] security-policy </span><br><span class="line">[FW1-policy-security] rule name anyall                   // 指定规则名称</span><br><span class="line">[FW1-policy-security-rule-anyall] source-zone any        // 源地址允许所有</span><br><span class="line">[FW1-policy-security-rule-anyall] destination-zone any   // 目标地址允许所有</span><br><span class="line">[FW1-policy-security-rule-anyall] action permit          // 放行</span><br><span class="line">[FW1-policy-security-rule-anyall] quit </span><br><span class="line">[FW1-policy-security] quit</span><br><span class="line"></span><br><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 将指定的接口加入到指定的区域内</span><br><span class="line">[FW1] firewall zone trust                                // 选择trust区域</span><br><span class="line">[FW1-zone-trust] add interface GigabitEthernet 1/0/0     // 添加内部的端口</span><br><span class="line">[FW1-zone-trust] quit</span><br><span class="line">[FW1] firewall zone untrust                              // 添加untru区域                            </span><br><span class="line">[FW1-zone-untrust] add interface GigabitEthernet 1/0/1   // 添加外部接口</span><br><span class="line">[FW1-zone-trust] quit</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置IP地址(两台)</strong> 给防火墙的两个接口配置好IP地址.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 配置防火墙FW1</span><br><span class="line">[FW1] interface GigabitEthernet 1/0/0                       // 选择内部接口</span><br><span class="line">[FW1-GigabitEthernet1/0/0] ip address 192.168.1.253 24      // 配置防火墙IP</span><br><span class="line">[FW1-GigabitEthernet1/0/0] service-manage ping permit       // 开启接口ping</span><br><span class="line">[FW1-GigabitEthernet1/0/0] quit</span><br><span class="line"></span><br><span class="line">[FW1] interface GigabitEthernet1/0/1</span><br><span class="line">[FW1-GigabitEthernet1/0/1] ip address 10.10.10.20 8</span><br><span class="line">[FW1-GigabitEthernet1/0/1] service-manage ping permit</span><br><span class="line">[FW1-GigabitEthernet1/0/1] quit</span><br><span class="line"></span><br><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 配置防火墙FW2</span><br><span class="line">[FW2] interface GigabitEthernet 1/0/0                       // 选择内部接口</span><br><span class="line">[FW2-GigabitEthernet1/0/0] ip address 192.168.1.254 24      // 配置防火墙IP</span><br><span class="line">[FW2-GigabitEthernet1/0/0] service-manage ping permit       // 开启接口ping</span><br><span class="line">[FW2-GigabitEthernet1/0/0] quit</span><br><span class="line">[FW2-GigabitEthernet1/0/0] quit</span><br><span class="line"></span><br><span class="line">[FW2] interface GigabitEthernet1/0/1</span><br><span class="line">[FW2-GigabitEthernet1/0/1] ip address 10.10.10.30 8</span><br><span class="line">[FW2-GigabitEthernet1/0/1] service-manage ping permit</span><br><span class="line">[FW2-GigabitEthernet1/0/1] quit</span><br></pre></td></tr></table></figure></p>
+<p><strong>开启源NAT地址</strong>:将内网数据映射到外网.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 配置防火墙FW1</span><br><span class="line">[FW1] nat-policy                                                       // 配置NAT地址转换</span><br><span class="line">[FW1-policy-nat] rule name tru_untr                                    // 指定策略名称</span><br><span class="line">[FW1-policy-nat-rule-tru_untr] egress-interface GigabitEthernet 1/0/1  // 外网接口IP</span><br><span class="line">[FW1-policy-nat-rule-tru_untr] action source-nat easy-ip               // 源地址转换</span><br><span class="line">[FW1-policy-nat-rule-tru_untr] display this</span><br><span class="line"></span><br><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 配置防火墙FW2</span><br><span class="line">[FW2] nat-policy                                                       // 配置NAT地址转换</span><br><span class="line">[FW2-policy-nat] rule name tru_untr                                    // 指定策略名称</span><br><span class="line">[FW2-policy-nat-rule-tru_untr] egress-interface GigabitEthernet 1/0/1  // 外网接口IP</span><br><span class="line">[FW2-policy-nat-rule-tru_untr] action source-nat easy-ip               // 源地址转换</span><br><span class="line">[FW2-policy-nat-rule-tru_untr] display this</span><br></pre></td></tr></table></figure></p>
+<p><strong>开启VRRP支持(两台)</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 配置防火墙FW1</span><br><span class="line">[FW1] interface GigabitEthernet 1/0/0                                 // 选择内部接口</span><br><span class="line">[FW1-GigabitEthernet1/0/0] vrrp vrid 1 virtual-ip 192.168.1.1 active  // 配置虚拟接口为主</span><br><span class="line">[FW1-GigabitEthernet1/0/0] quit</span><br><span class="line"></span><br><span class="line">[FW1] interface GigabitEthernet 1/0/1                                 // 选择外部接口</span><br><span class="line">[FW1-GigabitEthernet1/0/1] vrrp vrid 2 virtual-ip 10.10.10.10 active</span><br><span class="line">[FW1-GigabitEthernet1/0/1] quit</span><br><span class="line"></span><br><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 配置防火墙FW12</span><br><span class="line">[FW2] interface GigabitEthernet 1/0/0                                 // 选择内部接口</span><br><span class="line">[FW2-GigabitEthernet1/0/0] vrrp vrid 1 virtual-ip 192.168.1.1 standby // 配置虚拟接口为备</span><br><span class="line">[FW2-GigabitEthernet1/0/0] quit</span><br><span class="line"></span><br><span class="line">[FW2] interface GigabitEthernet 1/0/1</span><br><span class="line">[FW2-GigabitEthernet1/0/1] vrrp vrid 2 virtual-ip 10.10.10.10 standby</span><br><span class="line">[FW2-GigabitEthernet1/0/1] quit</span><br></pre></td></tr></table></figure></p>
+<p><strong>HRP配置(两台):</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 配置防火墙FW1</span><br><span class="line">[FW1] hrp enable</span><br><span class="line">HRP_S[FW1] hrp interface GigabitEthernet 0/0/0 remote 172.16.1.2   // 指定接口和对端IP</span><br><span class="line">HRP_M[FW1] interface GigabitEthernet 0/0/0                         // 选择虚拟接口</span><br><span class="line">HRP_M[FW1-GigabitEthernet0/0/0] ip address 172.16.1.1 24           // 配置本端IP地址</span><br><span class="line"></span><br><span class="line"># ------------------------------------------------------------</span><br><span class="line"># 配置防火墙FW2</span><br><span class="line">[FW2] hrp enable</span><br><span class="line">HRP_S[FW2] hrp standby-device</span><br><span class="line">HRP_S[FW2] hrp interface GigabitEthernet 0/0/0 remote 172.16.1.1</span><br><span class="line">HRP_S[FW2] interface GigabitEthernet 0/0/0</span><br><span class="line">HRP_S[FW2-GigabitEthernet0/0/0] ip address 172.16.1.2 24</span><br></pre></td></tr></table></figure></p>
+<p><strong>检查配置：</strong></p>
+<p>注意1：默认处于 standby 状态的设备不允许配置安全策略，只允许在主设<br>备配置安全策略，且安全策略会自动同步到备设备上面。</p>
+<p>开启命令：hrp standby config enable</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">HRP_M[FW1] display hrp state</span><br><span class="line"> Role: active, peer: standby</span><br><span class="line"> Running priority: 45000, peer: 45000</span><br><span class="line"> Core state: normal, peer: normal</span><br><span class="line"> Backup channel usage: 0.00%</span><br><span class="line"> Stable time: 0 days, 0 hours, 0 minutes</span><br><span class="line"> Last state change information: 2019-05-06 1:37:41 HRP core state changed, old_s</span><br><span class="line">tate = abnormal(active), new_state = normal, local_priority = 45000, peer_priori</span><br><span class="line">ty = 45000.</span><br><span class="line"></span><br><span class="line">HRP_S[FW2] display hrp state</span><br><span class="line"> Role: standby, peer: active</span><br><span class="line"> Running priority: 45000, peer: 45000</span><br><span class="line"> Core state: normal, peer: normal</span><br><span class="line"> Backup channel usage: 0.00%</span><br><span class="line"> Stable time: 0 days, 0 hours, 1 minutes</span><br><span class="line"> Last state change information: 2019-05-06 1:37:42 HRP link changes to up.</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h2 id="配置负载均衡"><a href="#配置负载均衡" class="headerlink" title="配置负载均衡"></a>配置负载均衡</h2><p><img src="/picture/20190508150335.jpg" alt="blockchain"></p>
+<p><strong>配置防火墙接口:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1]interface GigabitEthernet 1/0/0</span><br><span class="line">[FW1-GigabitEthernet1/0/0]ip address 192.168.1.1 24</span><br><span class="line">[FW1-GigabitEthernet1/0/0]service-manage ping permit </span><br><span class="line">[FW1-GigabitEthernet1/0/0]service-manage http permit</span><br><span class="line">[FW1-GigabitEthernet1/0/0]quit</span><br><span class="line"></span><br><span class="line">[FW1]interface GigabitEthernet 1/0/1</span><br><span class="line">[FW1-GigabitEthernet1/0/1]ip address 10.10.10.10 8</span><br><span class="line">[FW1-GigabitEthernet1/0/1]service-manage ping permit </span><br><span class="line">[FW1-GigabitEthernet1/0/1]service-manage http permit</span><br><span class="line">[FW1-GigabitEthernet1/0/1]quit</span><br></pre></td></tr></table></figure></p>
+<p><strong>加入相应的区域内:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1]firewall zone trust</span><br><span class="line">[FW1-zone-trust]add interface  GigabitEthernet 1/0/0</span><br><span class="line">[FW1-zone-trust]quit</span><br><span class="line"></span><br><span class="line">[FW1]firewall zone untrust</span><br><span class="line">[FW1-zone-untrust]add interface GigabitEthernet 1/0/1</span><br><span class="line">[FW1-zone-untrust]quit</span><br></pre></td></tr></table></figure></p>
+<p><strong>放行数据包:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1]security-policy</span><br><span class="line">[FW1-policy-security]rule name any_trust</span><br><span class="line">[FW1-policy-security-rule-any_trust]source-zone any</span><br><span class="line">[FW1-policy-security-rule-any_trust]destination-zone trust</span><br><span class="line"></span><br><span class="line">[FW1-policy-security-rule-any_trust]service http</span><br><span class="line">[FW1-policy-security-rule-any_trust]service icmp</span><br><span class="line">[FW1-policy-security-rule-any_trust]action permit</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置负载均衡:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[FW1] slb enable                                  // 启用SLB服务</span><br><span class="line">[FW1] slb                                         // 进入SLB配置视图</span><br><span class="line">[FW1-slb] group 1 WebServer                       // 创建服务器组webServer</span><br><span class="line">[FW1-slb-group-1] metric weight-least-connection  // 使用加权轮询算法</span><br><span class="line"></span><br><span class="line"># -------------------------------------------------------</span><br><span class="line">// 以下为真实服务设置   IP地址  端口 权重值 别名//</span><br><span class="line"></span><br><span class="line">[FW1-slb-group-1] rserver 1 rip 192.168.1.2 port 80 weight 1 description server1</span><br><span class="line">[FW1-slb-group-1] rserver 2 rip 192.168.1.3 port 80 weight 1 description server2</span><br><span class="line">[FW1-slb-group-1] rserver 3 rip 192.168.1.3 port 80 weight 1 description server3</span><br><span class="line">[FW1-slb-group-1]</span><br><span class="line">[FW1-slb-group-1] health-check type icmp tx-interval 5 times 3 // 配置服务健康检查参数  </span><br><span class="line">[FW1-slb-group-1] persistence type source-ip aging-time 180    // 配置会话保持时间</span><br><span class="line">[FW1-slb-group-1] quit                                         // 返回SLB视图</span><br><span class="line">[FW1-slb]</span><br><span class="line">[FW1-slb] vserver 1 WebServer            // 创建虚拟服务器WebServer</span><br><span class="line">[FW1-slb-vserver-1] protocol tcp         // 配置虚拟服务器的协议类型</span><br><span class="line">[FW1-slb-vserver-1] vip 1 10.10.10.100   // 设置虚拟服务器IP地址</span><br><span class="line">[FW1-slb-vserver-1] vport 80             // 设置虚拟服务器端</span><br><span class="line">[FW1-slb-vserver-1] group WebServer      // 关联真实服务器组</span><br><span class="line">[FW1-slb-vserver-1] quit                 // 返回SLB视图</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+
+      
+    </div>
+
+    
+
+<!--增加的底部版权代码-->
+<div>
+      
+        ﻿
+<br>
+<div class="my_post_copyright">
+  <p><span>文章作者:</span><a href="/" title="访问 王瑞 的个人博客">王瑞</a></p>
+  <p><span>发布时间:</span>2019年04月11日 - 10:04</p>
+  <p><span>原始链接:</span><a href="/2019/04/11/网络设备配置/华为防火墙配置笔记/" title="华为防火墙配置笔记">https://localhost/2019/04/11/网络设备配置/华为防火墙配置笔记/</a>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者</p>
+</div>
+
+      
+</div>
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/网络设备配置/" rel="tag"> <i class="fa fa-tag"></i> 网络设备配置</a>
+          
+            <a href="/tags/huawei/" rel="tag"> <i class="fa fa-tag"></i> huawei</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/10/网络设备配置/华为设备ACL与NAT技术/" rel="next" title="华为设备ACL与NAT技术">
+                <i class="fa fa-chevron-left"></i> 华为设备ACL与NAT技术
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/12/汇编与反汇编/Win32汇编语言基础-1/" rel="prev" title="Win32汇编语言基础(1)">
+                Win32汇编语言基础(1) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="王瑞">
+            
+              <p class="site-author-name" itemprop="name">王瑞</p>
+              <div class="site-description motion-element" itemprop="description">记录点滴技术成长之路</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">80</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/lyshark" title="GitHub &rarr; https://github.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="mailto:1181506874@qq.com" title="E-Mail &rarr; mailto:1181506874@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://plus.google.com/lyshark" title="Google &rarr; https://plus.google.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-google"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/lyshark" title="Twitter &rarr; https://twitter.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="http://wpa.qq.com/msgrd?v=3&uin=1181506874&site=hupaiyule&menu=yes" title="QQ &rarr; http://wpa.qq.com/msgrd?v=3&uin=1181506874&site=hupaiyule&menu=yes" rel="noopener" target="_blank"><i class="fa fa-fw fa-qq"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://weixin.qq.com" title="Wechat &rarr; https://weixin.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-weixin"></i></a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化防火墙"><span class="nav-text">初始化防火墙</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#防火墙基本配置"><span class="nav-text">防火墙基本配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NAT-地址转换"><span class="nav-text">NAT 地址转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配成交换机"><span class="nav-text">配成交换机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主备双机热备"><span class="nav-text">主备双机热备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置负载均衡"><span class="nav-text">配置负载均衡</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+
+<!-- 屏蔽版权开始 -->
+&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王瑞</span>
+<!-- 屏蔽版权结束 -->
+	 | 页面托管于 GitHub/Coding 主机
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+<script type="text/javascript" src="/js/coloured.js"></script>
+
+
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/poi.model.json"},"display":{"superSample":2,"width":300,"height":290,"position":"left","hOffset":0,"vOffset":-10},"mobile":{"show":true,"scale":0},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

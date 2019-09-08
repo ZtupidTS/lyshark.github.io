@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next gemini" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"slideUpIn","post_header":"slideUpIn","post_body":"slideUpIn","coll_header":"slideUpIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Ansible 是新出现的自动化运维工具,基于Python开发,集合了众多运维工具（puppet、cfengine、chef、func、fabric）的优点,实现了批量系统配置、批量程序部署、批量运行命令等功能,ansible是基于模块工作的,本身没有批量部署的能力,真正具有批量部署的是ansible所运行的模块,ansible只是提供一种框架.">
+<meta name="keywords" content="Linux 服务配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ansible 自动化工具入门">
+<meta property="og:url" content="https://localhost/2018/12/02/Linux 服务配置/Ansible 自动化工具入门/index.html">
+<meta property="og:site_name" content="哔哩哔">
+<meta property="og:description" content="Ansible 是新出现的自动化运维工具,基于Python开发,集合了众多运维工具（puppet、cfengine、chef、func、fabric）的优点,实现了批量系统配置、批量程序部署、批量运行命令等功能,ansible是基于模块工作的,本身没有批量部署的能力,真正具有批量部署的是ansible所运行的模块,ansible只是提供一种框架.">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://localhost/picture/20181201104145.jpg">
+<meta property="og:updated_time" content="2019-05-20T15:51:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ansible 自动化工具入门">
+<meta name="twitter:description" content="Ansible 是新出现的自动化运维工具,基于Python开发,集合了众多运维工具（puppet、cfengine、chef、func、fabric）的优点,实现了批量系统配置、批量程序部署、批量运行命令等功能,ansible是基于模块工作的,本身没有批量部署的能力,真正具有批量部署的是ansible所运行的模块,ansible只是提供一种框架.">
+<meta name="twitter:image" content="https://localhost/picture/20181201104145.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="哔哩哔" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://localhost/2018/12/02/Linux 服务配置/Ansible 自动化工具入门/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Ansible 自动化工具入门 | 哔哩哔</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">哔哩哔</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://localhost/2018/12/02/Linux 服务配置/Ansible 自动化工具入门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王瑞">
+      <meta itemprop="description" content="记录点滴技术成长之路">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="哔哩哔">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Ansible 自动化工具入门
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-02 10:53:24" itemprop="dateCreated datePublished" datetime="2018-12-02T10:53:24+08:00">2018-12-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-20 23:51:48" itemprop="dateModified" datetime="2019-05-20T23:51:48+08:00">2019-05-20</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux-服务配置/" itemprop="url" rel="index"><span itemprop="name">Linux 服务配置</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Ansible 是新出现的自动化运维工具,基于Python开发,集合了众多运维工具（puppet、cfengine、chef、func、fabric）的优点,实现了批量系统配置、批量程序部署、批量运行命令等功能,ansible是基于模块工作的,本身没有批量部署的能力,真正具有批量部署的是ansible所运行的模块,ansible只是提供一种框架.</p>
+<a id="more"></a>
+<p><br></p>
+<h2 id="Ansible-简介"><a href="#Ansible-简介" class="headerlink" title="Ansible 简介"></a>Ansible 简介</h2><p><img src="/picture/20181201104145.jpg" alt="blockchain"></p>
+<h3 id="Ansible-简单管理"><a href="#Ansible-简单管理" class="headerlink" title="Ansible 简单管理"></a>Ansible 简单管理</h3><p>下面的小实验,我们将采用以下的IP地址规划,请自行配置好.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[实验环境]</span><br><span class="line"></span><br><span class="line">[状态]    [主机列表]        [python版本]</span><br><span class="line"></span><br><span class="line">控制机 192.168.1.10        Python2.6/2.7</span><br><span class="line"></span><br><span class="line">被控机 192.168.1.20        Python2.4</span><br><span class="line">被控机 192.168.1.30        Python2.4</span><br></pre></td></tr></table></figure></p>
+<p>为了避免 Ansible 下发指令时输入目标主机密码,通过证书签名达到 SSH 无密码是一个好的方案,推荐使用 <code>ssh-keygen</code> 与 <code>ssh-copy-id</code> 来实现快速证书的生成及公钥下发.</p>
+<p>1.在控制主机创建密钥,执行 <code>ssh-keygen -t rsa</code> ,有询问直接按回车键即可,将在 /root/.ssh 下生成一对密钥,其中 id_rsa 为私钥,id_rsa.pub 为公钥,代码如下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ssh-keygen -t rsa</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ls -lh .ssh/*</span></span><br><span class="line">-rw-------. 1 root root  408 May 18 20:10 .ssh/authorized_keys</span><br><span class="line">-rw-------. 1 root root 1.7K May 18 20:19 .ssh/id_rsa</span><br><span class="line">-rw-r--r--. 1 root root  408 May 18 20:19 .ssh/id_rsa.pub</span><br></pre></td></tr></table></figure></p>
+<p>2.下发密钥就是控制主机把公钥id_rsa.pub下发到被管节点上用户下.ssh目录,并重命名成 authorized_keys 且权限值为 400,接下来推荐常用的密钥拷贝工具 <code>ssh-copy-id</code>把公钥文件id_rsa.pub公钥拷贝到被管节点,命令格式如下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ssh-copy-id root@192.168.1.20</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ssh-copy-id root@192.168.1.30</span></span><br></pre></td></tr></table></figure></p>
+<p>3.RHEL7.0安装Ansible后发现找不到ansible.cfg,配置文件的路径,我们需要手动将它的配置文件拷贝到/etc/目录下去.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># cd /usr/src/ansible-2.5.0/examples</span></span><br><span class="line">[root@localhost exampless]<span class="comment"># mkdir /etc/ansible</span></span><br><span class="line">[root@localhost exampless]<span class="comment"># cp -a ansible.cfg hosts /etc/ansible</span></span><br></pre></td></tr></table></figure></p>
+<p>4.编辑Ansible,写入被控主机IP地址,如果要写入一组IP我们可以加中括号 <code>webserver</code>代表的含义就是,执行下面一组IP的操作,<code>admin</code> 组则代表指定一个范围.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># vim /etc/ansible/hosts</span></span><br><span class="line"> </span><br><span class="line">192.168.1.20      <span class="comment">#写入单个IP地址</span></span><br><span class="line">192.168.1.30</span><br><span class="line"></span><br><span class="line">[webserver]       <span class="comment">#指定一个组</span></span><br><span class="line">192.168.1.20</span><br><span class="line">192.168.1.30</span><br><span class="line"></span><br><span class="line">[admin]           <span class="comment">#指定一个范围</span></span><br><span class="line">192.168.1.[1:100]</span><br></pre></td></tr></table></figure></p>
+<p>5.修改Ansible主配置文件,修改两处位置即可,分别是禁用每次执行命令检查ssh,和开启日志记录功能,取消两处的注释即可.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># vim /etc/ansible/ansible.cfg</span></span><br><span class="line"></span><br><span class="line">61 <span class="comment"># uncomment this to disable SSH key host checking</span></span><br><span class="line">62 host_key_checking = False        <span class="comment">#禁用每次执行命令检查ssh,取消注释</span></span><br><span class="line"></span><br><span class="line">100 <span class="comment"># logging is off by default unless this path is defined</span></span><br><span class="line">101 <span class="comment"># if so defined, consider logrotate</span></span><br><span class="line">102 log_path = /var/<span class="built_in">log</span>/ansible.log  <span class="comment">#开启日志记录功能,取消注释</span></span><br></pre></td></tr></table></figure></p>
+<p>6.此时Ansible控制主机就配置完毕了,我们来执行以下命令,看一下它的连通性吧,一般我们Ping一下看到pong说明成功啦.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m ping</span></span><br><span class="line"></span><br><span class="line">192.168.1.20 | SUCCESS =&gt; &#123;     <span class="comment">#说明成功</span></span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>, </span><br><span class="line">    <span class="string">"ping"</span>: <span class="string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">192.168.1.30 | SUCCESS =&gt; &#123;     <span class="comment">#说明成功</span></span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>, </span><br><span class="line">    <span class="string">"ping"</span>: <span class="string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[root@localhost ~]<span class="comment"># ansible webserver -m ping</span></span><br><span class="line"></span><br><span class="line">192.168.1.20 | SUCCESS =&gt; &#123;     <span class="comment">#说明成功</span></span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>, </span><br><span class="line">    <span class="string">"ping"</span>: <span class="string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">192.168.1.30 | SUCCESS =&gt; &#123;     <span class="comment">#说明成功</span></span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>, </span><br><span class="line">    <span class="string">"ping"</span>: <span class="string">"pong"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当管理主机较多时，可以使用以下脚本，批量下发密钥对<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/expect</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> timeout 10</span><br><span class="line"><span class="built_in">set</span> hostname [lindex <span class="variable">$argv</span> 0]</span><br><span class="line"><span class="built_in">set</span> username [lindex <span class="variable">$argv</span> 1]</span><br><span class="line"><span class="built_in">set</span> password [lindex <span class="variable">$argv</span> 2]</span><br><span class="line"></span><br><span class="line">spawn ssh-copy-id <span class="variable">$username</span>@<span class="variable">$hostname</span></span><br><span class="line"></span><br><span class="line">expect &#123;</span><br><span class="line">            <span class="string">"Are you sure you want to continue connecting (yes/no)?"</span> &#123;</span><br><span class="line">            send <span class="string">"yes\r"</span></span><br><span class="line">            expect <span class="string">"*password:"</span></span><br><span class="line">            send <span class="string">"<span class="variable">$password</span>\r"</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="string">"*password:"</span> &#123;</span><br><span class="line">            send <span class="string">"<span class="variable">$password</span>\r"</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="string">"Now try logging into the machine"</span> &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">expect eof</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">USER=root</span><br><span class="line">PASSWD=1233</span><br><span class="line"></span><br><span class="line"><span class="comment"># yum install -y expect</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> HOST <span class="keyword">in</span> 192.168.1.&#123;1..10&#125;</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">"------------------&gt;"</span> <span class="variable">$HOST</span> <span class="string">"-----------------------------"</span></span><br><span class="line">/usr/bin/expect -c <span class="string">"</span></span><br><span class="line"><span class="string">spawn ssh-copy-id <span class="variable">$USER</span>@<span class="variable">$HOST</span>;</span></span><br><span class="line"><span class="string">expect &#123;</span></span><br><span class="line"><span class="string">            \"Are you sure you want to continue connecting (yes/no)?\" &#123;</span></span><br><span class="line"><span class="string">            send \"yes\r\"</span></span><br><span class="line"><span class="string">            expect \"*password:\"</span></span><br><span class="line"><span class="string">            send \"<span class="variable">$PASSWD</span>\r\"</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">            \"*password:\" &#123;</span></span><br><span class="line"><span class="string">            send \"<span class="variable">$PASSWD</span>\r\"</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">            \"Now try logging into the machine\" &#123;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">expect eof</span></span><br><span class="line"><span class="string">"</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h2 id="主机清单与端口"><a href="#主机清单与端口" class="headerlink" title="主机清单与端口"></a>主机清单与端口</h2><h3 id="◆主机和组◆"><a href="#◆主机和组◆" class="headerlink" title="◆主机和组◆"></a>◆主机和组◆</h3><p>我们可以通过配置<code>/etc/ansible/hosts</code>这个文件来定义主机和主机组,例如下面的代码.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># cat -n /etc/ansible/hosts</span></span><br><span class="line"></span><br><span class="line">1 192.168.1.10 ansible_ssh_pass=<span class="string">'123123'</span></span><br><span class="line">2 192.168.1.20 ansible_ssh_pass=<span class="string">'123123'</span></span><br><span class="line">3 </span><br><span class="line">4 [docker]</span><br><span class="line">5 172.168.1.10[1:9]</span><br><span class="line"></span><br><span class="line">6 [docker:vars]</span><br><span class="line">7 ansible_ssh_pass=<span class="string">'123123'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">8 [web_server]</span><br><span class="line">9  192.168.10.10</span><br><span class="line">10 192.168.10.20</span><br><span class="line">11 192.168.10.30</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>上图的参数解析：<br>● 第1-2行：定义了两台主机,并且使用内置变量给予了SSH登陆密码.<br>● 第4-5行：定义了一个docker组,且组内有101-109这9台机器的定义.<br>● 第6-7行：定义为上面的docker组统一赋值一个密码.<br>● 第8-11行：定义了一个web_server组,其中有三台主机.</p>
+</blockquote>
+<p>这就是,常用的组的定义与声明部分啦.</p>
+<h3 id="◆端口与别名◆"><a href="#◆端口与别名◆" class="headerlink" title="◆端口与别名◆"></a>◆端口与别名◆</h3><p>ssh默认的端口是22 (此时的Ansible主机配置文件可以省略),但是如果某些主机的ssh运行在自定义的端口上,Ansible使用Paramiko进行ssh连接时不会使用你ssh配置文件中列出的端口,但是如果修改ansible使用openssh进行ssh连接时将会使用：</p>
+<p>1.在Client客户端上ssh开启2个端口连接,下面一段话随意加入到指定配置文件里即可.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@Client ~]<span class="comment"># vim /etc/ssh/sshd_config</span></span><br><span class="line">Port 10086</span><br><span class="line">Port 22</span><br><span class="line"></span><br><span class="line">[root@Client ~]<span class="comment"># systemctl restart sshd</span></span><br></pre></td></tr></table></figure></p>
+<p>2.在Ansible服务端的配置,配置主机清单列表同时指定一个主机端口即可.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@Ansible ~]<span class="comment"># vim /etc/ansible/hosts</span></span><br><span class="line"></span><br><span class="line">[web_server]</span><br><span class="line">192.168.10.10:10086</span><br><span class="line">192.168.10.20:10086</span><br><span class="line"></span><br><span class="line">[web_server:vars]</span><br><span class="line">ansible_ssh_pass=<span class="string">'123123'</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆使用主机变量◆"><a href="#◆使用主机变量◆" class="headerlink" title="◆使用主机变量◆"></a>◆使用主机变量◆</h3><p>这里介绍 Ansible Invento 的内置的一些参数,这些参数我们在实际工作中也会经常使用到.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">内置参数</th>
+<th style="text-align:left">参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ansible_ssh_host</td>
+<td style="text-align:left">指定被管理的主机的真实IP</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_ssh_port</td>
+<td style="text-align:left">指定连接到被管理主机的ssh端口号,默认是22</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_ssh_user</td>
+<td style="text-align:left">ssh连接时默认使用的用户名</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_ssh_pass</td>
+<td style="text-align:left">ssh连接时的密码</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_sudo_pass</td>
+<td style="text-align:left">使用sudo连接用户时的密码</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_sudo_exec</td>
+<td style="text-align:left">如果sudo命令不在默认路径,需要指定sudo命令路径</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_ssh_private_key_file</td>
+<td style="text-align:left">秘钥文件路径,秘钥文件如果不想使用ssh-agent管理时可以使用此选项</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_shell_type</td>
+<td style="text-align:left">目标系统的shell的类型，默认sh</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_connection</td>
+<td style="text-align:left">SSH 连接的类型：local,ssh,paramiko</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_python_interpreter</td>
+<td style="text-align:left">用来指定python解释器的路径</td>
+</tr>
+</tbody>
+</table>
+<p>上面的实例也可以配置直接使用用户名和密码进行连接<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># vim /etc/ansible/hosts</span></span><br><span class="line"></span><br><span class="line">[web_server]</span><br><span class="line">192.168.10.10 ansible_ssh_port=10086 ansible_ssh_user=root ansible_ssh_pass=<span class="string">'123123'</span></span><br><span class="line"></span><br><span class="line">[docker_server]</span><br><span class="line">192.168.10.10</span><br><span class="line">192.168.10.20</span><br><span class="line"></span><br><span class="line">[docker_server:vars]</span><br><span class="line">ansible_ssh_port=10086</span><br><span class="line">ansible_ssh_user=root</span><br><span class="line">ansible_ssh_pass=<span class="string">'123123'</span></span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="常用Ad-Hoc模块"><a href="#常用Ad-Hoc模块" class="headerlink" title="常用Ad-Hoc模块"></a>常用Ad-Hoc模块</h2><h3 id="◆Shell◆"><a href="#◆Shell◆" class="headerlink" title="◆Shell◆"></a>◆Shell◆</h3><p>shell 模块可以帮助我们在远程主机上执行命令,它与 command 模块不同之处是 shell 模块在远程主机中执行命令时,会运行远程主机上的 /bin/sh 程序处理,也就是说它不是直接执行命令,而是交给了bash来托管执行,这样一来我们的管道符也就被支持了,笔者还是常用shell这个模块的,因为方便.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">free_form</td>
+<td style="text-align:left">必要参数,默认会使用,无需手动添加</td>
+</tr>
+<tr>
+<td style="text-align:left">chdir</td>
+<td style="text-align:left">指定一个目录,在执行命令前首先会切换到指定目录中去</td>
+</tr>
+<tr>
+<td style="text-align:left">creates</td>
+<td style="text-align:left">当指定的文件存在时,就不执行对应命令,起到判断的作用</td>
+</tr>
+<tr>
+<td style="text-align:left">removes</td>
+<td style="text-align:left">与creates参数相反,当指定的文件不存在时,就不执行对应命令</td>
+</tr>
+<tr>
+<td style="text-align:left">executable</td>
+<td style="text-align:left">默认系统会使用bash这个shell执行,如果要切换shell则使用这个选项</td>
+</tr>
+</tbody>
+</table>
+<p>shell 模块中 chdir、creates、removes参数的作用与 command 模块中的作用都是相同的,这里为了节约篇幅只举一个小例子,改变一下它的默认路径.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m shell -a "chdir=/boot ls"</span></span><br></pre></td></tr></table></figure></p>
+<p>紧接着我们看一下executable这个参数来指定一个默认shell,由于这里没有其他shell我们就用bash来演示一下吧.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m shell -a "executable=/bin/bash uname -r"</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ansible all -m shell -a "executable=/bin/bash uname -r" -o</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Script◆"><a href="#◆Script◆" class="headerlink" title="◆Script◆"></a>◆Script◆</h3><p>script 模块可以帮助我们在远程主机上执行我们编写的管理主机的脚本,也就是说,脚本一直存在于你的管理主机本地,无需手动拷贝到远程主机,你当然也可以使用copy模块将你的脚本拷贝到远程主机,然后执行/bin/bash调用脚本执行,但是这样就太麻烦了,幸好Ansible为我们提供了script管理模块.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">free_form</td>
+<td style="text-align:left">必要参数,默认会使用,无需手动添加</td>
+</tr>
+<tr>
+<td style="text-align:left">chdir</td>
+<td style="text-align:left">指定一个目录,在执行命令前首先会切换到指定目录中去</td>
+</tr>
+<tr>
+<td style="text-align:left">creates</td>
+<td style="text-align:left">当指定的文件存在时,就不执行对应命令,起到判断的作用</td>
+</tr>
+<tr>
+<td style="text-align:left">removes</td>
+<td style="text-align:left">与creates参数相反,当指定的文件不存在时,就不执行对应命令</td>
+</tr>
+</tbody>
+</table>
+<p>我们来编写一个打印系统日期的脚本,然后在使用script模块执行,看一下远程主机的执行情况,这里需要注意的是<code>/root/data.sh</code>是本地路径下脚本的保存位置.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># cat data.sh </span></span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">date</span><br><span class="line"></span><br><span class="line">[root@localhost ~]<span class="comment"># ansible all -m script -a "/root/data.sh"</span></span><br></pre></td></tr></table></figure></p>
+<p>接下来,我们通过使用creates关键字,先判断<code>/etc/passwd</code>是否存在,如果存在则不执行data.sh这个脚本,否则执行.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m script -a "creates=/etc/passwd /root/data.sh"</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ansible all -m script -a "removes=/etc/passwd /root/data.sh"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆File◆"><a href="#◆File◆" class="headerlink" title="◆File◆"></a>◆File◆</h3><p>file 模块可以帮助我们完成一些对文件的基本操作,比如,创建文件或目录、删除文件或目录、修改文件权限、修以及软硬链接的创建,文件操作File在实际环境中应用还是很广泛的.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">path</td>
+<td style="text-align:left">必选参数,用于指定文件或者目录的路径,使用dest或name也可以</td>
+</tr>
+<tr>
+<td style="text-align:left">state</td>
+<td style="text-align:left">用于指定一个文件的状态,比如state=directory代表针对目录操作</td>
+</tr>
+<tr>
+<td style="text-align:left">src</td>
+<td style="text-align:left">被链接源文件路径/只应用于state=link,只用于软连接或硬链接</td>
+</tr>
+<tr>
+<td style="text-align:left">dest</td>
+<td style="text-align:left">被链接到的路径/只应用于state=link,只用于软连接或硬链接</td>
+</tr>
+<tr>
+<td style="text-align:left">force</td>
+<td style="text-align:left">强制创建软连接/本选项只有两个属性 yes或no</td>
+</tr>
+<tr>
+<td style="text-align:left">owner</td>
+<td style="text-align:left">指定文件/目录的属主,也就是所有者</td>
+</tr>
+<tr>
+<td style="text-align:left">group</td>
+<td style="text-align:left">指定文件/目录的属组,也就是所属组</td>
+</tr>
+<tr>
+<td style="text-align:left">mode</td>
+<td style="text-align:left">指定文件/目录的权限,也就是chmod设置的权限</td>
+</tr>
+<tr>
+<td style="text-align:left">recurse</td>
+<td style="text-align:left">递归设置目录的属性,相当于chmod -R操作</td>
+</tr>
+<tr>
+<td style="text-align:left">directory</td>
+<td style="text-align:left">文件状态：如果目录不存在则创建</td>
+</tr>
+<tr>
+<td style="text-align:left">file</td>
+<td style="text-align:left">文件状态：即使目录不存在也不创建</td>
+</tr>
+<tr>
+<td style="text-align:left">link</td>
+<td style="text-align:left">文件状态：创建软链接选项</td>
+</tr>
+<tr>
+<td style="text-align:left">hard</td>
+<td style="text-align:left">文件状态：创建硬链接选项</td>
+</tr>
+<tr>
+<td style="text-align:left">touch</td>
+<td style="text-align:left">文件状态：文件不存在则创建</td>
+</tr>
+<tr>
+<td style="text-align:left">absent</td>
+<td style="text-align:left">文件状态：删除或取消一个链接</td>
+</tr>
+</tbody>
+</table>
+<p>1.通过命令给远程主机创建一个名为<code>lyshark.log</code>文件,如果<code>/tmp/lyshark.log</code>文件已存在则更新时间戳,否则创建这个文件.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m file -a <span class="string">"path=/tmp/lyshark.log state=touch"</span></span><br></pre></td></tr></table></figure></p>
+<p>2.在远程主机创建一个名为<code>lyshark</code>的目录,如果<code>/tmp/lyshark</code>这个目录存在,则不进行任何操作.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m file -a <span class="string">"path=/tmp/lyshark state=directory"</span></span><br></pre></td></tr></table></figure></p>
+<p>3.在远程主机给<code>/bin/bash</code>命令,创建一个名为<code>lyshark.link</code>的软链接,文件存在则不进行任何操作.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m file -a <span class="string">"src=/bin/bash path=/tmp/lyshark.link state=link"</span></span><br></pre></td></tr></table></figure></p>
+<p>4.在远程主机给<code>/bin/bash</code>命令,创建一个名为<code>lyshark.hard</code>的硬链接,文件存在则不进行任何操作.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m file -a <span class="string">"src=/bin/bash path=/tmp/lyshark.hard state=hard"</span></span><br></pre></td></tr></table></figure></p>
+<p>5.在远程主机给<code>/bin/bash</code>命令,创建一个名为<code>lyshark.hard</code>的硬链接,若文件存在则强制覆盖一遍.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m file -a <span class="string">"src=/bin/bash path=/tmp/lyshark.hard state=hard force=yes"</span></span><br></pre></td></tr></table></figure></p>
+<p>6.通过state=absent关键字,删除远程机器上的指定文件或目录,这里我们删除上面的<code>/tmp/lyshark.hard</code>这个硬链接.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m file -a <span class="string">"path=/tmp/lyshark.hard state=absent"</span></span><br></pre></td></tr></table></figure></p>
+<p>7.在创建文件或目录的时候指定属主与属组,或直接修改远程主机上的文件或目录的属主与属组.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m shell -a <span class="string">"rm -fr /tmp/*"</span> -o      <span class="comment">#清空演示目录</span></span><br><span class="line">ansible all -m shell -a <span class="string">"useradd admin"</span>         <span class="comment">#创建一个用户与组</span></span><br><span class="line">ansible all -m file -a <span class="string">"path=/tmp/lyshark state=directory owner=root group=admin"</span></span><br><span class="line">ansible all -m file -a <span class="string">"path=/tmp/lyshark mode=777"</span></span><br></pre></td></tr></table></figure></p>
+<p>7.当操作远程主机中的目录时,同时递归的将<code>/tmp/lyshark</code>目录中的文件的属主属组都设置为admin.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m file -a <span class="string">"path=/tmp/lyshark state=directory owner=admin group=admin mode=777 recurse=yes"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Copy◆"><a href="#◆Copy◆" class="headerlink" title="◆Copy◆"></a>◆Copy◆</h3><p>文件的复制也是最常用的功能之一,在Ansible中我们可以使用copy模块本模块的作用就是拷贝文件它与fetch模块类似,不过fetch模块是从远程主机中拉取文件到 ansible 管理主机,而 copy 模块是将 ansible 管理主机上的文件拷贝到远程主机中,文件的变化是通过MD5值来判断的.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">src</td>
+<td style="text-align:left">用于指定本地文件的保存位置,也就是ansible管理主机的文件位置</td>
+</tr>
+<tr>
+<td style="text-align:left">dest</td>
+<td style="text-align:left">指定文件将被拷贝到远程主机的哪个目录中,此选项必选</td>
+</tr>
+<tr>
+<td style="text-align:left">content</td>
+<td style="text-align:left">用于替代src参数使用,可以直接设定指定文件的值</td>
+</tr>
+<tr>
+<td style="text-align:left">force</td>
+<td style="text-align:left">远程主机文件存在强制拷贝,默认两个选项yes/no</td>
+</tr>
+<tr>
+<td style="text-align:left">backup</td>
+<td style="text-align:left">在覆盖前是否备份,此参数有两个选项yes/no</td>
+</tr>
+<tr>
+<td style="text-align:left">owner</td>
+<td style="text-align:left">在拷贝到远程主机以后,设置属主,远程主机上必须有对应的用户</td>
+</tr>
+<tr>
+<td style="text-align:left">group</td>
+<td style="text-align:left">在拷贝到远程主机以后,设置属组,远程主机上必须有对应的用户</td>
+</tr>
+<tr>
+<td style="text-align:left">mode</td>
+<td style="text-align:left">在拷贝到远程主机以后,设置文件的权限信息</td>
+</tr>
+<tr>
+<td style="text-align:left">others</td>
+<td style="text-align:left">所有的file模块里的选项都可以在这里使用</td>
+</tr>
+<tr>
+<td style="text-align:left">directory_mode</td>
+<td style="text-align:left">递归设定目录的权限,默认为系统默认权限</td>
+</tr>
+</tbody>
+</table>
+<p>1.将 ansible 管理主机中 <code>/etc/passwd</code> 文件复制到远程主机的 <code>/tmp</code> 目录下.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m copy -a <span class="string">"src=/etc/passwd dest=/tmp"</span></span><br><span class="line"><span class="comment">#注:如果执行失败,请在被控机上安装 yum install libselinux-python -y</span></span><br></pre></td></tr></table></figure></p>
+<p>2.通过使用content指定文本数据,覆盖写入远程<code>/tmp/passwd</code>文件里,注意这里只能是目录.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m copy -a <span class="string">'content="www.mkdirs.com\nby:LyShark\n" dest=/tmp/passwd'</span></span><br></pre></td></tr></table></figure></p>
+<p>3.将ansible主机上的<code>/etc/shadow</code>文件拷贝到远程主机的<code>/tmp/</code>目录下,并指定文件的属组等信息,需要注意,远程主机上必须存在对应的组.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m copy -a <span class="string">'src=/etc/shadow dest=/tmp/shadow owner=admin group=admin mode=777'</span></span><br></pre></td></tr></table></figure></p>
+<p>4.将远程主机<code>/bin/bash</code>文件通过feth模块,拉取到本地<code>/root</code>目录下.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m fetch -a <span class="string">"src=/bin/bash dest=/root"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Find◆"><a href="#◆Find◆" class="headerlink" title="◆Find◆"></a>◆Find◆</h3><p>find命令用来在指定目录下查找文件,任何位于参数之前的字符串都将被视为欲查找的目录名,如果使用该命令时,不设置任何参数,则find命令将在当前目录下查找子目录与文件,并且将查找到的子目录和文件全部进行显示,下面的find 模块也可以帮助我们在被管理主机中查找符合条件的文件,就像 find 命令一样.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">paths</td>
+<td style="text-align:left">指定在哪个目录中查找文件,可以指定多个路径用逗号隔开</td>
+</tr>
+<tr>
+<td style="text-align:left">recurse</td>
+<td style="text-align:left">是否为递归子目录查找文件,参数有两个选项yes/no</td>
+</tr>
+<tr>
+<td style="text-align:left">hidden</td>
+<td style="text-align:left">是否查找隐藏文件,当hidden=yes才会查找隐藏文件</td>
+</tr>
+<tr>
+<td style="text-align:left">file_type</td>
+<td style="text-align:left">指定查找文件的类型,可指定any、directory、file、link 四种</td>
+</tr>
+<tr>
+<td style="text-align:left">patterns</td>
+<td style="text-align:left">指定需要查找文件的名称,想要使用python正则去匹配文件需要使用use_regex=yes</td>
+</tr>
+<tr>
+<td style="text-align:left">use_regex</td>
+<td style="text-align:left">是否启用python正则来查找文件,两种选项yes/no</td>
+</tr>
+<tr>
+<td style="text-align:left">contains</td>
+<td style="text-align:left">根据文章内容查找文件,此参数的值为一个正则表达式</td>
+</tr>
+<tr>
+<td style="text-align:left">age</td>
+<td style="text-align:left">指定文件间隔时间,可使用单位有秒(s)、分(m)、时(h)、天(d)、星期(w)</td>
+</tr>
+<tr>
+<td style="text-align:left">age_stamp</td>
+<td style="text-align:left">根据时间范围查找文件,文件时间属性有三个时间种类，atime、ctime、mtime</td>
+</tr>
+<tr>
+<td style="text-align:left">size</td>
+<td style="text-align:left">根据文件的大小来查找,可以使用的单位有 t、g、m、k、b</td>
+</tr>
+<tr>
+<td style="text-align:left">get_checksum</td>
+<td style="text-align:left">当有符合查找条件的文件被找到时,会同时返回对应文件的sha1校验码</td>
+</tr>
+</tbody>
+</table>
+<p>1.查询远程主机中<code>/etc</code>目录下,包含 passwd 字符串的文件,隐藏文件会被忽略,不会进行递归查找.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m find -a <span class="string">'paths=/etc contains="*passwd*"'</span></span><br></pre></td></tr></table></figure></p>
+<p>2.查询远程主机中<code>/etc</code>目录以及子目录中,查找文件内容中包含 passwd 字符串的文件,隐藏文件会被忽略.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m find -a <span class="string">'paths=/etc contains="*passwd*" recurse=yes'</span></span><br></pre></td></tr></table></figure></p>
+<p>3.查询远程主机中<code>/etc</code>目录下以 .sh 结尾的文件,包括隐藏文件,但是不包括目录或其他文件类型,不会进行递归查找.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m find -a <span class="string">'paths=/etc patterns="*.sh" file_type=any hidden=yes'</span></span><br></pre></td></tr></table></figure></p>
+<p>4.查询远程主机中<code>/etc</code>目录下以 .sh 结尾的文件,包括隐藏文件,包括所有文件类型,比如文件、目录、或者软链接,但是不会进行递归查找.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m find -a <span class="string">'paths=/etc patterns="*.sh" file_type=any hidden=yes'</span></span><br></pre></td></tr></table></figure></p>
+<p>5.查询远程主机中<code>/etc</code>目录中以及其子目录中查找 mtime 在1天以内的文件,不包含隐藏文件,不包含目录或软链接文件等文件类型.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m find -a <span class="string">'paths=/etc age=-1d recurse=yes'</span></span><br></pre></td></tr></table></figure></p>
+<p>6.查询远程主机中<code>/etc</code>目录中以及其子目录中查找大于 1m 的文件,不包含隐藏文件,不包含目录或软链接文件等文件类型.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m find -a <span class="string">'paths=/etc size=1m recurse=yes'</span></span><br></pre></td></tr></table></figure></p>
+<p>7.查询远程主机中<code>/etc</code>目录中以及其子目录中查找以 .sh 结尾的文件,并且返回符合条件文件的 sha1 校验码,包括隐藏文件.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m find -a <span class="string">'paths=/etc patterns=*.sh get_checksum=yes hidden=yes recurse=yes'</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Unarchive◆"><a href="#◆Unarchive◆" class="headerlink" title="◆Unarchive◆"></a>◆Unarchive◆</h3><p>unarchive模块的功能是,解压缩,这个模块有两种用法</p>
+<p>1.将ansible主机上的压缩包在本地解压缩后传到远程主机上,这种情况下copy=yes<br>2.将远程主机上的某个压缩包解压缩到指定路径下,这种情况下,需要设置copy=no</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">copy</td>
+<td style="text-align:left">在解压文件之前,是否先将文件复制到远程主机,默认为yes</td>
+</tr>
+<tr>
+<td style="text-align:left">creates</td>
+<td style="text-align:left">指定一个文件名,当该文件存在时,则解压指令不执行</td>
+</tr>
+<tr>
+<td style="text-align:left">src</td>
+<td style="text-align:left">如果copy为yes,则需要指定压缩文件的源路径</td>
+</tr>
+<tr>
+<td style="text-align:left">dest</td>
+<td style="text-align:left">远程主机上的一个路径,即文件解压的路径</td>
+</tr>
+<tr>
+<td style="text-align:left">list_files</td>
+<td style="text-align:left">列出压缩包里的文件,默认两个参数yes/no</td>
+</tr>
+<tr>
+<td style="text-align:left">mode</td>
+<td style="text-align:left">解压后文件的权限设置</td>
+</tr>
+<tr>
+<td style="text-align:left">group</td>
+<td style="text-align:left">解压后的目录或文件的属组</td>
+</tr>
+<tr>
+<td style="text-align:left">owner</td>
+<td style="text-align:left">解压后文件或目录的属主</td>
+</tr>
+</tbody>
+</table>
+<p>将ansible控制主机上的<code>/root/lyshark.tar.gz</code>解压缩到远程主机的<code>/tmp/</code>目录下,并设置权限777.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m unarchive -a "src=/root/lyshark.tar.gz dest=/tmp/ mode=777"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Lineinfile◆"><a href="#◆Lineinfile◆" class="headerlink" title="◆Lineinfile◆"></a>◆Lineinfile◆</h3><p>lineinfile模块相当的重要,在自动化运维中起到了至关重要的目的,他可以通过正则表达式替换指定文本,例如开启一些配置选项等,还可以新加一行文本,或者是删除指定的行,本命令一定认证的掌握下来.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">path</td>
+<td style="text-align:left">必须参数,指定要操作的文件路径</td>
+</tr>
+<tr>
+<td style="text-align:left">line</td>
+<td style="text-align:left">必须参数,指定要替换的文本内容</td>
+</tr>
+<tr>
+<td style="text-align:left">regexp</td>
+<td style="text-align:left">匹配正则语句,与要过滤的关键字</td>
+</tr>
+<tr>
+<td style="text-align:left">state</td>
+<td style="text-align:left">状态语句：state=absent则是删除,state=present默认</td>
+</tr>
+<tr>
+<td style="text-align:left">backrefs</td>
+<td style="text-align:left">表示是否开启后向引用,默认no,yes/no</td>
+</tr>
+<tr>
+<td style="text-align:left">create</td>
+<td style="text-align:left">当文件不存在时,是否创建对应的文件,yes/no</td>
+</tr>
+<tr>
+<td style="text-align:left">backup</td>
+<td style="text-align:left">是否在修改文件之前对文件进行备份</td>
+</tr>
+<tr>
+<td style="text-align:left">insertafter</td>
+<td style="text-align:left">借助insertafter参数可以将文本插入到”指定的行”之后</td>
+</tr>
+<tr>
+<td style="text-align:left">insertbefore</td>
+<td style="text-align:left">借助insertafter参数可以将文本插入到”指定的行”之前</td>
+</tr>
+</tbody>
+</table>
+<p>0.将远程文件的<code>www</code>字段全部替换成<code>wangrui</code>,并且在替换前做备份操作.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m replace -a <span class="string">'path=/tmp/lyshark.log regexp="www" replace="wangrui" backup=yes'</span></span><br></pre></td></tr></table></figure></p>
+<p>1.通过正则匹配查找<code>/etc/selinux/config</code>文本中开头是<code>SELINUX=</code>的行,并替换成<code>SELINUX=disabled</code>.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m lineinfile -a <span class="string">'path=/etc/selinux/config regexp="^SELINUX=" line="SELINUX=disabled"'</span></span><br></pre></td></tr></table></figure></p>
+<p>2.通过正则匹配查找<code>/etc/selinux/config</code>文本,并在<code>文本末尾</code>插入一行<code>mkdirs.com</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m lineinfile -a <span class="string">'path=/etc/selinux/config regexp="EOF" line="mkdirs.com"'</span></span><br></pre></td></tr></table></figure></p>
+<p>3.通过正则匹配查找<code>/etc/selinux/config</code>文本,并在<code>文本行首</code>插入一行<code>mkdirs.com</code>.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m lineinfile -a <span class="string">'path=/etc/selinux/config regexp="BOF" line="mkdirs.com"'</span></span><br></pre></td></tr></table></figure></p>
+<p>4.通过正则匹配查找<code>/etc/selinux/config</code>文本,删除所有的<code>mkdirs.com</code>字段.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m lineinfile -a <span class="string">'path=/etc/selinux/config regexp="^mkdirs.com" state=absent'</span></span><br></pre></td></tr></table></figure></p>
+<p>5.通过正则匹配查找<code>/etc/selinux/config</code>文本中在开头是<code>SELINUX=disabled</code>行的<code>行后</code>插入一段话<code>mkdirs.com</code>.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m lineinfile -a <span class="string">'path=/etc/selinux/config insertafter="^SELINUX=" line="mkdirs.com"'</span></span><br></pre></td></tr></table></figure></p>
+<p>6.通过正则匹配查找<code>/etc/selinux/config</code>文本中在开头是<code>SELINUX=disabled</code>行的<code>行前</code>插入一段话<code>mkdirs.com</code>.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m lineinfile -a <span class="string">'path=/etc/selinux/config insertbefore="^SELINUX=" line="mkdirs.com"'</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Setup◆"><a href="#◆Setup◆" class="headerlink" title="◆Setup◆"></a>◆Setup◆</h3><p>setup 模块用于收集远程主机的一些基本信息,其可以收集几乎主机上的任何数据,方便我们后期的分析工作.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ansible_all_ipv4_addresses</td>
+<td style="text-align:left">仅显示ipv4的信息</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_devices</td>
+<td style="text-align:left">仅显示磁盘设备信息</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_distribution</td>
+<td style="text-align:left">显示是什么系统,例：centos,suse等</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_distribution_major_version</td>
+<td style="text-align:left">显示是系统主版本</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_distribution_version</td>
+<td style="text-align:left">仅显示系统版本</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_machine</td>
+<td style="text-align:left">显示系统类型,例：32位还是64位</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_eth0</td>
+<td style="text-align:left">仅显示eth0的信息</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_hostname</td>
+<td style="text-align:left">仅显示主机名</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_kernel</td>
+<td style="text-align:left">仅显示内核版本</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_lvm</td>
+<td style="text-align:left">显示lvm相关信息</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_memtotal_mb</td>
+<td style="text-align:left">显示系统总内存</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_memfree_mb</td>
+<td style="text-align:left">显示可用系统内存</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_memory_mb</td>
+<td style="text-align:left">详细显示内存情况</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_swaptotal_mb</td>
+<td style="text-align:left">显示总的swap内存</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_swapfree_mb</td>
+<td style="text-align:left">显示swap内存的可用内存</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_mounts</td>
+<td style="text-align:left">显示系统磁盘挂载情况</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_processor</td>
+<td style="text-align:left">显示cpu个数(具体显示每个cpu的型号)</td>
+</tr>
+<tr>
+<td style="text-align:left">ansible_processor_vcpus</td>
+<td style="text-align:left">显示cpu个数(只显示总的个数)</td>
+</tr>
+</tbody>
+</table>
+<p>1.通过setup命令获取远程主机的主机信息.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m setup</span></span><br></pre></td></tr></table></figure></p>
+<p>2.获取远程主机的 IPV4 地址,或者是IPV6地址.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m setup -a "filter=ansible_all_ipv4_addresses"</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ansible all -m setup -a "filter=ansible_all_ipv6_addresses"</span></span><br></pre></td></tr></table></figure></p>
+<p>3.获取远程主机的内存信息列表.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m setup -a "filter=ansible_memory_mb"</span></span><br></pre></td></tr></table></figure></p>
+<p>4.通过通配符实现模糊匹配，比如以”mb”关键字结尾的信息.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m setup -a "filter=*mb"</span></span><br></pre></td></tr></table></figure></p>
+<p>5.查询系统eth0接口相关信息列表.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m setup -a "filter=ansible_ens32"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Yum◆"><a href="#◆Yum◆" class="headerlink" title="◆Yum◆"></a>◆Yum◆</h3><p>yum 模块可以帮助我们在远程主机上通过yum源管理软件包,软件的安装也是至关重要的,这里我们介绍Yum模块,主要用户批量部署常用组件.yum 模块可以提供的status状态：latest,present,installed:这3个分别代表安装,后面2个是卸载.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">name</td>
+<td style="text-align:left">必须参数,用于指定需要管理的软件包</td>
+</tr>
+<tr>
+<td style="text-align:left">state</td>
+<td style="text-align:left">用于指定软件包的状态,默认值为present</td>
+</tr>
+<tr>
+<td style="text-align:left">disable_gpg_check</td>
+<td style="text-align:left">用于禁用对 rpm 包的公钥 gpg 验证,默认值为 no</td>
+</tr>
+<tr>
+<td style="text-align:left">enablerepo</td>
+<td style="text-align:left">用于指定安装软件包时临时启用的 yum 源</td>
+</tr>
+<tr>
+<td style="text-align:left">disablerepo</td>
+<td style="text-align:left">用于指定安装软件包时临时禁用的 yum 源</td>
+</tr>
+</tbody>
+</table>
+<p>1.安装软件：通过Yum模块批量的安装httpd服务到指定主机上.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m yum -a "name=httpd state=installed" -o</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ansible all -m shell -a "rpm -qa httpd" -o</span></span><br></pre></td></tr></table></figure></p>
+<p>2.卸载软件：通过Yum模块批量的卸载httpd服务主机.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m yum -a "name=httpd state=removed" -o</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ansible all -m shell -a "rpm -qa httpd" -o</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Cron◆"><a href="#◆Cron◆" class="headerlink" title="◆Cron◆"></a>◆Cron◆</h3><p>cron 模块可以帮助我们管理远程主机中的计划任务,功能相当于 crontab 命令.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">user</td>
+<td style="text-align:left">用于设置当前计划任务属于哪个用户,当不使用此参数时,默认为管理员用户</td>
+</tr>
+<tr>
+<td style="text-align:left">job</td>
+<td style="text-align:left">指定计划的任务中需要实际执行的命令或者脚本</td>
+</tr>
+<tr>
+<td style="text-align:left">name</td>
+<td style="text-align:left">用于设置计划任务的名称,计划任务的名称会在注释中显示</td>
+</tr>
+<tr>
+<td style="text-align:left">state</td>
+<td style="text-align:left">相关状态信息,当删除计划任务时,需要将 state 的值设置为 absent</td>
+</tr>
+<tr>
+<td style="text-align:left">disabled</td>
+<td style="text-align:left">当计划任务有名称时,我们可以根据名称使对应的任务失效</td>
+</tr>
+<tr>
+<td style="text-align:left">backup</td>
+<td style="text-align:left">此参数的值设置为yes,那么当修改或者删除对应的计划任务时,会对计划任务备份</td>
+</tr>
+<tr>
+<td style="text-align:left">$time</td>
+<td style="text-align:left">指定具体的执行时间,minute分,hour时,day天,month月,weekday 0-7 代表周</td>
+</tr>
+</tbody>
+</table>
+<p>1.创建计划任务,任务名称为<code>mkdirs test</code> 任务于每天1点5分,执行输出一段话<code>echo hello lyshark</code>.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m cron -a <span class="string">"name='mkdirs test' minute=5 hour=1 job='echo hello lyshark'"</span></span><br></pre></td></tr></table></figure></p>
+<p>2.创建计划任务任务名称为<code>mkdirs test1</code> 任务每3天执行一次,于执行当天的1点1分开始执行,任务内容为输出<code>wangrui</code>字符.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m cron -a <span class="string">"name='mkdirs test1' minute=1 hour=1 day=*/3 job='echo wangrui'"</span></span><br></pre></td></tr></table></figure></p>
+<p>3.删除计划任务<code>mkdirs test1</code>,删除前做好备份.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m cron -a <span class="string">"name='mkdirs test1' state=absent backup=yes"</span></span><br></pre></td></tr></table></figure></p>
+<p>4.查询远程主机上的任务列表.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m shell -a <span class="string">"crontab -l"</span> -o</span><br></pre></td></tr></table></figure></p>
+<p>5.其他配置过程.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m cron -a <span class="string">"name='test cron' job='/bin/bash /tmp/lyshark.sh' weekday=6"</span></span><br><span class="line">ansible all -m cron -a <span class="string">"name='test admin' job='/bin/bash /tmp/lyshark.sh' weekday=6 minute=30 hour='*/8'"</span></span><br><span class="line">ansible all -m cron -a <span class="string">"name='test cron' job='/bin/bash /tmp/lyshark.sh' minute=30 hour='*/8' day='1,10,20' weekday=6"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Service◆"><a href="#◆Service◆" class="headerlink" title="◆Service◆"></a>◆Service◆</h3><p>service 模块可以帮助我们管理远程主机上的服务,它完全可以替代Linux系统下的,相关操作比如启动服务,设置开机自启动.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">name</td>
+<td style="text-align:left">此参数用于指定需要操作的服务名称</td>
+</tr>
+<tr>
+<td style="text-align:left">state</td>
+<td style="text-align:left">此参数用于指定服务的状态,started、stopped、restarted、reloaded</td>
+</tr>
+<tr>
+<td style="text-align:left">enabled</td>
+<td style="text-align:left">此参数用于指定是否将服务设置为开机 启动项</td>
+</tr>
+</tbody>
+</table>
+<p>1.设置服务开机自启动,设置httpd服务开机自启动.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m service -a "name=httpd runlevel=3 state=started enabled=yes"</span></span><br></pre></td></tr></table></figure></p>
+<p>2.关闭服务开机自启动,关闭httpd服务开机自启动.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m service -a "name=httpd runlevel=3 state=stopped enabled=no"</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="◆Get-url◆"><a href="#◆Get-url◆" class="headerlink" title="◆Get_url◆"></a>◆Get_url◆</h3><p>get_url模块用于下载指定文件到本地,在生产环境中也是最常用的东西啦.</p>
+<p>下面来看它的几个常用参数： </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命 令 参 数</th>
+<th style="text-align:left">参 数 解 释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">dest</td>
+<td style="text-align:left">文件下载到远程的那个目录下</td>
+</tr>
+<tr>
+<td style="text-align:left">force</td>
+<td style="text-align:left">是否强制覆盖yes/no</td>
+</tr>
+<tr>
+<td style="text-align:left">url</td>
+<td style="text-align:left">指定一个URL地址</td>
+</tr>
+</tbody>
+</table>
+<p>1.下载一个指定文件到远程主机,我这里没有网络,这里只做演示吧.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ansible all -m get_url -a "url=http://mirrors.aliyun.com/repo/Centos-7.repo dest=/root"</span></span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="PlayBook-实战部署"><a href="#PlayBook-实战部署" class="headerlink" title="PlayBook 实战部署"></a>PlayBook 实战部署</h2><h3 id="部署LAMP"><a href="#部署LAMP" class="headerlink" title="部署LAMP"></a>部署LAMP</h3><p>1.创建一个hosts文件列表,并指定用户名以及密码.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost playbook]<span class="comment"># vim hosts</span></span><br><span class="line"></span><br><span class="line">[lamp]</span><br><span class="line">192.168.1.31</span><br><span class="line">192.168.1.32</span><br><span class="line"></span><br><span class="line">[lamp:vars]</span><br><span class="line">ansible_ssh_port=22</span><br><span class="line">ansible_ssh_user=root</span><br><span class="line">ansible_ssh_pass=<span class="string">'1233'</span></span><br></pre></td></tr></table></figure></p>
+<p>2.创建剧本文件.<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost playbook]<span class="comment"># vim main.yml</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 初始化,关闭防火墙,和SELinux</span></span><br><span class="line"> - hosts: lamp</span><br><span class="line">   tasks:</span><br><span class="line">     - name: off selinux and iptables</span><br><span class="line">       shell: setenforce 0 &amp;&amp; iptables -F</span><br><span class="line">     - name: permanent off selinux</span><br><span class="line">       lineinfile:</span><br><span class="line">            dest: /etc/selinux/config</span><br><span class="line">            regexp: <span class="string">'^SELINUX='</span></span><br><span class="line">            line: <span class="string">'SELINUX=disabled'</span></span><br><span class="line"><span class="comment">#----------------------------------------------------------</span></span><br><span class="line"> - hosts: lamp</span><br><span class="line">   tasks:</span><br><span class="line">     - name: shell install lamp</span><br><span class="line">       shell: yum install -y apr apr-util httpd mariadb mariadb-server php php-mysql</span><br><span class="line">     - name: copy index.html index.php</span><br><span class="line">       copy: src=&#123;&#123;item.src&#125;&#125; dest=&#123;&#123;item.dest&#125;&#125; owner=root group=root mode=644</span><br><span class="line">       with_items:</span><br><span class="line">           - &#123;src: ./index.html,dest: /var/www/html/index.html&#125;</span><br><span class="line">           - &#123;src: ./index.php,dest: /var/www/html/index.php&#125;</span><br><span class="line">     - name: start httpd,mariadb</span><br><span class="line">       shell: systemctl restart httpd mariadb</span><br><span class="line">     - name: <span class="built_in">set</span> mysql password</span><br><span class="line">       shell: mysql -e <span class="string">"set password=password('123123');"</span></span><br><span class="line"></span><br><span class="line">       notify:                <span class="comment"># 上一条命令执行成功发送notify消息</span></span><br><span class="line">          - run httpd</span><br><span class="line">          - run mariadb</span><br><span class="line"></span><br><span class="line">   handlers:                  <span class="comment"># 接到指定的消息并执行相应的过程</span></span><br><span class="line">      - name: run httpd</span><br><span class="line">        service: name=httpd state=restarted</span><br><span class="line">      - name: run mariadb</span><br><span class="line">        service: name=mariadb state=restarted</span><br></pre></td></tr></table></figure></p>
+<p>3.检查剧本并执行<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost playbook]<span class="comment"># ansible-playbook -i hosts main.yml --syntax-check</span></span><br><span class="line">[root@localhost playbook]<span class="comment"># ansible-playbook -i hosts main.yml --list-task</span></span><br><span class="line">[root@localhost playbook]<span class="comment"># ansible-playbook -i hosts main.yml --list-hosts</span></span><br><span class="line"></span><br><span class="line">[root@localhost playbook]<span class="comment"># ansible-playbook -i hosts main.yml</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="部署Zabbix客户端"><a href="#部署Zabbix客户端" class="headerlink" title="部署Zabbix客户端"></a>部署Zabbix客户端</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost playbook]<span class="comment"># cat hosts</span></span><br><span class="line">[zabbix_client]</span><br><span class="line">192.168.1.31</span><br><span class="line">192.168.1.32</span><br><span class="line"></span><br><span class="line">[zabbix_client:vars]</span><br><span class="line">ansible_ssh_port=22</span><br><span class="line">ansible_ssh_user=root</span><br><span class="line">ansible_ssh_pass=<span class="string">'1233'</span></span><br></pre></td></tr></table></figure>
+<p>2.编写简单的部署脚本 main.yml<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line"> - hosts: zabbix_client</span><br><span class="line">   <span class="comment">#remote_user: root              #指定远程SSH认证用户</span></span><br><span class="line">   <span class="comment">#sudo: yes                      #启用Sudo操作</span></span><br><span class="line">   <span class="comment">#sudo_user: lyshark             #指定Sudo的用户</span></span><br><span class="line">   vars:</span><br><span class="line">     - ServerIP: 192.168.1.30</span><br><span class="line">   tasks:</span><br><span class="line">     - name: wget zabbix-agent-4.0.0-2.el7.x86_64.rpm</span><br><span class="line">       get_url: url=<span class="string">"http://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-agent-4.0.0-2.el7.x86_64.rpm"</span> dest=<span class="string">"/tmp"</span></span><br><span class="line">     - name: install zabbix-agent-4.0.0-2.el7.x86_64.rpm</span><br><span class="line">       shell: rpm -i /tmp/zabbix-agent-4.0.0-2.el7.x86_64.rpm</span><br><span class="line"></span><br><span class="line">     - name: edit zabbix_agentd.conf</span><br><span class="line">       lineinfile:</span><br><span class="line">            dest: /etc/zabbix/zabbix_agentd.conf</span><br><span class="line">            regexp: <span class="string">'Server=127.0.0.1'</span></span><br><span class="line">            line: <span class="string">'Server=&#123;&#123;ServerIP&#125;&#125;'</span></span><br><span class="line">     - name: edit zabbix_agentd.conf</span><br><span class="line">       lineinfile:</span><br><span class="line">            dest: /etc/zabbix/zabbix_agentd.conf</span><br><span class="line">            regexp: <span class="string">'ServerActive=127.0.0.1'</span></span><br><span class="line">            line: <span class="string">'ServerActive=&#123;&#123;ServerIP&#125;&#125;'</span></span><br><span class="line">     - name: edit zabbix_agentd.conf</span><br><span class="line">       lineinfile:</span><br><span class="line">            dest: /etc/zabbix/zabbix_agentd.conf</span><br><span class="line">            regexp: <span class="string">'Hostname=Zabbix server'</span></span><br><span class="line">            line: <span class="string">'Hostname=&#123;&#123;ServerIP&#125;&#125;'</span></span><br><span class="line"></span><br><span class="line">     - name: start zabbix</span><br><span class="line">       shell: /usr/sbin/zabbix_agentd</span><br><span class="line">     - name: <span class="built_in">enable</span> zabbix</span><br><span class="line">       shell: <span class="built_in">echo</span> <span class="string">"/usr/sbin/zabbix_agentd"</span> &gt;&gt; /etc/bashrc</span><br></pre></td></tr></table></figure></p>
+<p>3.检查剧本并执行<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost playbook]<span class="comment"># ansible-playbook -i hosts main.yml --syntax-check</span></span><br><span class="line">[root@localhost playbook]<span class="comment"># ansible-playbook -i hosts main.yml --list-task</span></span><br><span class="line">[root@localhost playbook]<span class="comment"># ansible-playbook -i hosts main.yml --list-hosts</span></span><br><span class="line"></span><br><span class="line">[root@localhost playbook]<span class="comment"># ansible-playbook -i hosts main.yml</span></span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+
+      
+    </div>
+
+    
+
+<!--增加的底部版权代码-->
+<div>
+      
+        ﻿
+<br>
+<div class="my_post_copyright">
+  <p><span>文章作者:</span><a href="/" title="访问 王瑞 的个人博客">王瑞</a></p>
+  <p><span>发布时间:</span>2018年12月02日 - 10:12</p>
+  <p><span>原始链接:</span><a href="/2018/12/02/Linux 服务配置/Ansible 自动化工具入门/" title="Ansible 自动化工具入门">https://localhost/2018/12/02/Linux 服务配置/Ansible 自动化工具入门/</a>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者</p>
+</div>
+
+      
+</div>
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux-服务配置/" rel="tag"> <i class="fa fa-tag"></i> Linux 服务配置</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/30/Linux/Linux防火墙配置与管理-16/" rel="next" title="Linux防火墙配置与管理(16)">
+                <i class="fa fa-chevron-left"></i> Linux防火墙配置与管理(16)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/14/Linux 服务配置/Docker-容器配置笔记/" rel="prev" title="Docker 容器配置笔记">
+                Docker 容器配置笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="王瑞">
+            
+              <p class="site-author-name" itemprop="name">王瑞</p>
+              <div class="site-description motion-element" itemprop="description">记录点滴技术成长之路</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">80</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/lyshark" title="GitHub &rarr; https://github.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="mailto:1181506874@qq.com" title="E-Mail &rarr; mailto:1181506874@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://plus.google.com/lyshark" title="Google &rarr; https://plus.google.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-google"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/lyshark" title="Twitter &rarr; https://twitter.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="http://wpa.qq.com/msgrd?v=3&uin=1181506874&site=hupaiyule&menu=yes" title="QQ &rarr; http://wpa.qq.com/msgrd?v=3&uin=1181506874&site=hupaiyule&menu=yes" rel="noopener" target="_blank"><i class="fa fa-fw fa-qq"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://weixin.qq.com" title="Wechat &rarr; https://weixin.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-weixin"></i></a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ansible-简介"><span class="nav-text">Ansible 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ansible-简单管理"><span class="nav-text">Ansible 简单管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主机清单与端口"><span class="nav-text">主机清单与端口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#◆主机和组◆"><span class="nav-text">◆主机和组◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆端口与别名◆"><span class="nav-text">◆端口与别名◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆使用主机变量◆"><span class="nav-text">◆使用主机变量◆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用Ad-Hoc模块"><span class="nav-text">常用Ad-Hoc模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Shell◆"><span class="nav-text">◆Shell◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Script◆"><span class="nav-text">◆Script◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆File◆"><span class="nav-text">◆File◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Copy◆"><span class="nav-text">◆Copy◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Find◆"><span class="nav-text">◆Find◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Unarchive◆"><span class="nav-text">◆Unarchive◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Lineinfile◆"><span class="nav-text">◆Lineinfile◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Setup◆"><span class="nav-text">◆Setup◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Yum◆"><span class="nav-text">◆Yum◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Cron◆"><span class="nav-text">◆Cron◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Service◆"><span class="nav-text">◆Service◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆Get-url◆"><span class="nav-text">◆Get_url◆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PlayBook-实战部署"><span class="nav-text">PlayBook 实战部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#部署LAMP"><span class="nav-text">部署LAMP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署Zabbix客户端"><span class="nav-text">部署Zabbix客户端</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+
+<!-- 屏蔽版权开始 -->
+&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王瑞</span>
+<!-- 屏蔽版权结束 -->
+	 | 页面托管于 GitHub/Coding 主机
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+<script type="text/javascript" src="/js/coloured.js"></script>
+
+
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/poi.model.json"},"display":{"superSample":2,"width":300,"height":290,"position":"left","hOffset":0,"vOffset":-10},"mobile":{"show":true,"scale":0},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next gemini" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"slideUpIn","post_header":"slideUpIn","post_body":"slideUpIn","coll_header":"slideUpIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="汇编语言(assembly language)是一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言,亦称为符号语言.在汇编语言中,用助记符(Mnemonics)代替机器指令的操作码,用地址符号(Symbol)或标号(Label)代替指令或操作数的地址.在不同的设备中,汇编语言对应着不同的机器语言指令集,通过汇编过程转换成机器指令,普遍地说,特定的汇编语言和特定的机器语言指令集是相互对">
+<meta name="keywords" content="汇编与反汇编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Win32汇编系统函数(5)">
+<meta property="og:url" content="https://localhost/2019/04/20/汇编与反汇编/Win32汇编系统函数-5/index.html">
+<meta property="og:site_name" content="哔哩哔">
+<meta property="og:description" content="汇编语言(assembly language)是一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言,亦称为符号语言.在汇编语言中,用助记符(Mnemonics)代替机器指令的操作码,用地址符号(Symbol)或标号(Label)代替指令或操作数的地址.在不同的设备中,汇编语言对应着不同的机器语言指令集,通过汇编过程转换成机器指令,普遍地说,特定的汇编语言和特定的机器语言指令集是相互对">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-09-07T00:34:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Win32汇编系统函数(5)">
+<meta name="twitter:description" content="汇编语言(assembly language)是一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言,亦称为符号语言.在汇编语言中,用助记符(Mnemonics)代替机器指令的操作码,用地址符号(Symbol)或标号(Label)代替指令或操作数的地址.在不同的设备中,汇编语言对应着不同的机器语言指令集,通过汇编过程转换成机器指令,普遍地说,特定的汇编语言和特定的机器语言指令集是相互对">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="哔哩哔" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://localhost/2019/04/20/汇编与反汇编/Win32汇编系统函数-5/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Win32汇编系统函数(5) | 哔哩哔</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">哔哩哔</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://localhost/2019/04/20/汇编与反汇编/Win32汇编系统函数-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王瑞">
+      <meta itemprop="description" content="记录点滴技术成长之路">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="哔哩哔">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Win32汇编系统函数(5)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-20 09:57:38" itemprop="dateCreated datePublished" datetime="2019-04-20T09:57:38+08:00">2019-04-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-07 08:34:12" itemprop="dateModified" datetime="2019-09-07T08:34:12+08:00">2019-09-07</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/汇编与反汇编/" itemprop="url" rel="index"><span itemprop="name">汇编与反汇编</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>汇编语言(assembly language)是一种用于电子计算机、微处理器、微控制器或其他可编程器件的低级语言,亦称为符号语言.在汇编语言中,用助记符(Mnemonics)代替机器指令的操作码,用地址符号(Symbol)或标号(Label)代替指令或操作数的地址.在不同的设备中,汇编语言对应着不同的机器语言指令集,通过汇编过程转换成机器指令,普遍地说,特定的汇编语言和特定的机器语言指令集是相互对应的,不同平台之间不可直接移植.</p>
+<p>熟练掌握Win32 API函数的参数传递,是软件逆向的基础,本章节内容将使用MASM汇编器,逐个编译这些源程序,你可以通过使用一些调试工具,这里推荐OllyDBG来附加编译后的可执行文件,进行逐个分析,观察二进制程序逆向后的一些变化,总结吸收经验,为以后的二进制逆向,漏洞挖掘打基础.</p>
+<a id="more"></a>
+<p><br></p>
+<h2 id="通用系统函数"><a href="#通用系统函数" class="headerlink" title="通用系统函数"></a>通用系统函数</h2><p><strong>注册热键:</strong> 注册全局热键并能激活.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	hMsgBox db &quot;你按下了 CTRL + ALT + A&quot;,0h</span><br><span class="line">	uMsg MSG &lt;?&gt;</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		; 41h = A | 65h=uMsg.wParam</span><br><span class="line">		invoke RegisterHotKey,NULL,065h,MOD_CONTROL or MOD_ALT,041h</span><br><span class="line">		.while(TRUE)</span><br><span class="line">			invoke GetMessage,addr uMsg,NULL,0,0</span><br><span class="line">			.if(uMsg.message == WM_HOTKEY)       ; 按下按键提示</span><br><span class="line">				invoke MessageBox,NULL,addr hMsgBox,addr uMsg.wParam,MB_OK</span><br><span class="line">			.elseif(uMsg.message == WM_DESTROY)  ; 程序结束后关闭热键</span><br><span class="line">				invoke UnregisterHotKey,NULL,065h</span><br><span class="line">				invoke PostQuitMessage,NULL</span><br><span class="line">			.endif</span><br><span class="line">		.endw</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>最小化指定窗口:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	FindName db &quot;qq&quot;,0h</span><br><span class="line">	handle   dd ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke FindWindow,NULL,addr FindName</span><br><span class="line">		mov handle,eax</span><br><span class="line">		</span><br><span class="line">		.if(handle != 0)         ; 找到则隐藏窗口</span><br><span class="line">			invoke ShowWindow,handle,SW_HIDE</span><br><span class="line">		.else                    ; 没有找到则显示</span><br><span class="line">			invoke ShowWindow,handle,SW_SHOW</span><br><span class="line">		.endif</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>显示当前目录等:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	stStartUp STARTUPINFO &lt;?&gt;</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke	GetStartupInfo,addr stStartUp</span><br><span class="line">		mov eax,stStartUp.lpDesktop</span><br><span class="line">		mov eax,stStartUp.lpTitle        ; 显示当前软件目录</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>取系统版本等:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	version OSVERSIONINFO &lt;?&gt;</span><br><span class="line">	lpsystem SYSTEM_INFO &lt;?&gt;</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetSystemInfo,addr lpsystem</span><br><span class="line">		mov ax,lpsystem.wProcessorArchitecture</span><br><span class="line">		</span><br><span class="line">		invoke GetVersionEx,addr version</span><br><span class="line">		mov eax,version.dwBuildNumber</span><br><span class="line">		</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>取命令行参数:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	cmdline dword ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		</span><br><span class="line">		invoke GetCommandLine                ; 获取命令行参数</span><br><span class="line">		mov cmdline,eax</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取环境变量:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szBuffer  DB 200 dup(?)      ; 保存到缓冲区</span><br><span class="line">	szVarName DB &quot;PATH&quot;,0h       ; 获取set PATH</span><br><span class="line">	lpVar     DD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetEnvironmentVariable,addr szVarName,addr szBuffer,sizeof szBuffer</span><br><span class="line">		xor eax,eax</span><br><span class="line">		invoke GetEnvironmentStrings</span><br><span class="line">		mov lpVar,eax</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>设置环境变量:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line"></span><br><span class="line">	lpVarName DB &quot;PATH&quot;,0h</span><br><span class="line">	lpValue   DB &quot;E:\RadASM\masm32\bin&quot;,0h</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke SetEnvironmentVariable,addr lpVarName,addr lpValue</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>运行系统软件:</strong> 下载并运行一个软件.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include urlmon.inc</span><br><span class="line">includelib urlmon.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szURL DB &quot;https://www.mkdirs.com/lyshark.exe&quot;,0h</span><br><span class="line">	szFileName DB &quot;C:\\lyshark.exe&quot;,0h</span><br><span class="line">	WinRun DB &quot;C:/lyshark.exe&quot;,0h</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke URLDownloadToFile,NULL,addr szURL,addr szFileName,0,NULL</span><br><span class="line">		invoke WinExec,offset WinRun,SW_SHOW</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取本地时间:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	systime SYSTEMTIME &lt;&gt;</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetLocalTime,addr systime   ; 获取当前时间</span><br><span class="line">		mov ax,systime.wYear</span><br><span class="line">		mov bx,systime.wMonth</span><br><span class="line">		mov cx,systime.wDay</span><br><span class="line">		</span><br><span class="line">		invoke SetLocalTime,addr systime   ; 设置当前时间</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取系统时间:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	systime SYSTEMTIME &lt;&gt;</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetSystemTime,addr systime</span><br><span class="line">		mov ax,systime.wYear</span><br><span class="line">		mov bx,systime.wMonth</span><br><span class="line">		mov cx,systime.wDay</span><br><span class="line">		</span><br><span class="line">		invoke SetSystemTime,addr systime</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取时间差:</strong> eax保存的就是执行代码后的时间差,单位毫秒<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	dwTock DWORD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetTickCount</span><br><span class="line">		mov dwTock,eax</span><br><span class="line">		invoke GetTickCount</span><br><span class="line">		sub eax,dwTock</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="内存分配函数"><a href="#内存分配函数" class="headerlink" title="内存分配函数"></a>内存分配函数</h2><h3 id="◆标准内存管理◆"><a href="#◆标准内存管理◆" class="headerlink" title="◆标准内存管理◆"></a>◆标准内存管理◆</h3><p><strong>获取内存状态:</strong> GlobalMemourStatus<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	Mem MEMORYSTATUS &lt;&gt;</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GlobalMemoryStatus,offset Mem</span><br><span class="line">		</span><br><span class="line">		mov eax,Mem.dwLength        ; 获取结构长度</span><br><span class="line">		mov eax,Mem.dwMemoryLoad    ; 已用内存百分比</span><br><span class="line">		mov eax,Mem.dwTotalPhys     ; 物理内存总数</span><br><span class="line">		mov eax,Mem.dwAvailPhys     ; 可用物理内存</span><br><span class="line">		mov eax,Mem.dwTotalPageFile ; 交换文件的总大小</span><br><span class="line">		mov eax,Mem.dwAvailPageFile ; 交换文件可用大小</span><br><span class="line">		mov eax,Mem.dwTotalVirtual  ; 用户可用的地址空间</span><br><span class="line">		mov eax,Mem.dwAvailVirtual  ; 用户空闲地址空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>申请内存:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpMemory DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		;GMEM_FIXED=申请内存;GMEM_ZEROINIT申请并初始化为0</span><br><span class="line">		invoke GlobalAlloc,GMEM_ZEROINIT,1024</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov lpMemory,eax     ; lpMemory 为分配成功后的内存指针</span><br><span class="line">		.endif</span><br><span class="line"></span><br><span class="line">		invoke GlobalFree,lpMemory   ; 释放内存空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>扩大内存空间:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpMemory DWORD ?</span><br><span class="line">	reMemory DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GlobalAlloc,GMEM_ZEROINIT,100</span><br><span class="line">		mov lpMemory,eax</span><br><span class="line">		invoke GlobalReAlloc,lpMemory,1024,GMEM_ZEROINIT or GMEM_MOVEABLE</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov reMemory,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke GlobalFree,lpMemory</span><br><span class="line">		invoke GlobalFree,reMemory</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>锁定/解锁内存:</strong> 程序需要使用这块内存可以将其锁定,使用完后可以解除锁定.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpMemory DWORD ?</span><br><span class="line">	Locks    DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GlobalAlloc,GMEM_ZEROINIT,100</span><br><span class="line">		mov lpMemory,eax</span><br><span class="line">		</span><br><span class="line">		invoke GlobalLock,lpMemory     ; 锁定内存空间</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov Locks,eax          ; 锁定成功后,返回原内存地址</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke GlobalUnlock,lpMemory   ; 解锁内存空间,成功返回非0</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>可移动/可丢弃内存:</strong> 可移动内存允许在不使用时改变其内存地址,可丢弃当内存不足时可将其丢弃。<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lp_Move_Memory DWORD ?</span><br><span class="line">	lp_Disb_Memory DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GlobalAlloc,GMEM_MOVEABLE or GMEM_ZEROINIT,1024     ; 分配可移动的内存</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov lp_Move_Memory,eax                  ; 分配成功则保存其内存地址</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke GlobalAlloc,GMEM_DISCARDABLE or GMEM_ZEROINIT,1024  ; 分配可丢弃的内存</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov lp_Disb_Memory,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>复制内存地址:</strong> 将源地址复制到目标地址中,总共复制40个字节.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	Source DWORD 1,2,3,4,5</span><br><span class="line">	       DWORD 6,7,8,9,0</span><br><span class="line">	</span><br><span class="line">	Dest   DWORD 0,0,0,0,0</span><br><span class="line">	       DWORD 0,0,0,0,0</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		lea eax,Source         ; 源地址</span><br><span class="line">		lea ebx,Dest           ; 目标地址</span><br><span class="line">		</span><br><span class="line">		invoke RtlMoveMemory,addr Dest,addr Source,40     ;将源地址复制到目标地址,复制40个字节</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>填充内存:</strong> 将Memory中的字节数据，全部填充替换为A，或填充为0<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	Memory DB 1,2,3,4,5,6,7,8,9,0</span><br><span class="line">	       DB 1,2,3,4,5,6,7,8,9,0</span><br><span class="line">	       DB 1,2,3,4,5,6,7,8,9,0</span><br><span class="line">	Fill   DB &quot;A&quot;,0</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		lea eax,Memory</span><br><span class="line">		</span><br><span class="line">		; 填充Memory内存，向后填充1024字节，填充为A</span><br><span class="line">		invoke RtlFillMemory,addr Memory,1024,addr Fill</span><br><span class="line">		;填充Memory内存，向后填充1024字节，全部初始化为0</span><br><span class="line">		invoke RtlZeroMemory,addr Memory,1024</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆堆管理函数◆"><a href="#◆堆管理函数◆" class="headerlink" title="◆堆管理函数◆"></a>◆堆管理函数◆</h3><p><strong>创建私有堆:</strong> 创建一个1024字节的私有堆,并返回内存地址.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	HeapMain DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">	</span><br><span class="line">		invoke HeapCreate,HEAP_NO_SERIALIZE,1024,0   ; 保留1024字节物理内存</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov HeapMain,eax                         ; 成功分配则返回内存地址</span><br><span class="line">		.endif</span><br><span class="line">		invoke HeapDestroy,HeapMain                  ; 释放堆空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>分配内存块:</strong> 在创建的堆中分配内存块.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpHeap DWORD ?</span><br><span class="line">	lpMem  DWORD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke HeapCreate,HEAP_NO_SERIALIZE,1024,0   ; 保留1024字节物理内存</span><br><span class="line">		mov lpHeap,eax                               ; 保存分配的地址</span><br><span class="line">		invoke HeapAlloc, lpHeap,HEAP_ZERO_MEMORY,1024 ; 分配1024字节空间</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov lpMem,eax                          ; 分配成功,保存内存地址</span><br><span class="line">		.endif</span><br><span class="line"></span><br><span class="line">		invoke HeapDestroy,lpHeap                  ; 释放堆空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>在堆中分配内存:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpHeap   DWORD ?</span><br><span class="line">	lpMemory DWORD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke HeapCreate,HEAP_NO_SERIALIZE,1024,0     ; 创建堆句柄,并保留1024字节</span><br><span class="line">		mov lpHeap,eax                                 ; 保存分配句柄地址</span><br><span class="line">		</span><br><span class="line">		invoke HeapAlloc,lpHeap,HEAP_ZERO_MEMORY,1024  ; 分配1024字节的地址</span><br><span class="line">		mov lpMemory,eax                               ; 分配并返回内存地址</span><br><span class="line">		</span><br><span class="line">		invoke HeapDestroy,lpHeap                      ; 释放堆空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>增加堆内存空间:</strong> 在原本来的内存地址基础上,增加内存空间<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpHeap   DWORD ?</span><br><span class="line">	lpMemory DWORD ?</span><br><span class="line">	ReMemory DWORD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke HeapCreate,HEAP_NO_SERIALIZE,4096,0     ; 创建堆句柄,并保留4096字节</span><br><span class="line">		mov lpHeap,eax                                 ; 保存分配句柄地址</span><br><span class="line">		</span><br><span class="line">		invoke HeapAlloc,lpHeap,HEAP_ZERO_MEMORY,1024  ; 分配1024字节的地址</span><br><span class="line">		mov lpMemory,eax                               ; 分配并返回内存地址</span><br><span class="line">		</span><br><span class="line">		; 重新分配内存空间,在原内存1024上调整到2048</span><br><span class="line">		invoke HeapReAlloc,lpHeap,HEAP_ZERO_MEMORY,lpMemory,2048</span><br><span class="line">		mov ReMemory,eax                               ; 保存返回内存地址</span><br><span class="line">		</span><br><span class="line">		invoke HeapDestroy,lpHeap                      ; 释放堆空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>计算堆空间大小:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpHeap   DWORD ?</span><br><span class="line">	lpMemory DWORD ?</span><br><span class="line">	Mem_Size DWORD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke HeapCreate,HEAP_NO_SERIALIZE,4096,0     ; 创建堆句柄,并保留4096字节</span><br><span class="line">		mov lpHeap,eax                                 ; 保存分配句柄地址</span><br><span class="line">		</span><br><span class="line">		invoke HeapAlloc,lpHeap,HEAP_ZERO_MEMORY,1024  ; 分配1024字节的地址</span><br><span class="line">		mov lpMemory,eax                               ; 分配并返回内存地址</span><br><span class="line"></span><br><span class="line">		invoke HeapSize,lpHeap,HEAP_NO_SERIALIZE,lpMemory ; 计算堆空间的大小</span><br><span class="line">		mov Mem_Size,eax                                  ; 取地址大小,此处为1024</span><br><span class="line">		</span><br><span class="line">		invoke HeapDestroy,lpHeap                      ; 释放堆空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>锁定/解锁堆:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpHeap   DWORD ?</span><br><span class="line">	lpMemory DWORD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke HeapCreate,HEAP_NO_SERIALIZE,4096,0     ; 创建堆句柄,并保留4096字节</span><br><span class="line">		mov lpHeap,eax                                 ; 保存分配句柄地址</span><br><span class="line">		</span><br><span class="line">		invoke HeapAlloc,lpHeap,HEAP_ZERO_MEMORY,1024  ; 分配1024字节的地址</span><br><span class="line">		mov lpMemory,eax                               ; 分配并返回内存地址</span><br><span class="line"></span><br><span class="line">		invoke HeapLock,lpHeap                         ; 锁定内存堆</span><br><span class="line">		invoke HeapUnlock,lpHeap                       ; 解锁内存堆</span><br><span class="line">		</span><br><span class="line">		invoke HeapDestroy,lpHeap                      ; 释放堆空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆虚拟内存函数◆"><a href="#◆虚拟内存函数◆" class="headerlink" title="◆虚拟内存函数◆"></a>◆虚拟内存函数◆</h3><p><strong>保留地址空间:</strong> 保留的空间不可以直接使用.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpAddr DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke VirtualAlloc,NULL,1024,MEM_RESERVE,PAGE_NOACCESS  ; 保留内存地址</span><br><span class="line">		mov lpAddr,eax</span><br><span class="line">		invoke VirtualFree,lpAddr,1024,MEM_RELEASE               ; 释放地址空间</span><br><span class="line">		</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>分配地址空间:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpAddr DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke VirtualAlloc,NULL,1024,MEM_COMMIT,PAGE_READWRITE  ; 分配内存地址</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov lpAddr,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke VirtualFree,lpAddr,1024,MEM_RELEASE               ; 释放内存地址</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>保护/锁定内存:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpAddr DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke VirtualAlloc,NULL,1024,MEM_COMMIT,PAGE_READWRITE  ; 保留内存地址</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov lpAddr,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke VirtualProtect,lpAddr,1024,PAGE_NOACCESS,NULL     ; 设置内存为只读</span><br><span class="line">		</span><br><span class="line">		invoke VirtualLock,lpAddr,1024                           ; 锁定内存地址</span><br><span class="line">		invoke VirtualUnlock,lpAddr,1024                         ; 解除内存锁定</span><br><span class="line">		</span><br><span class="line">		invoke VirtualFree,lpAddr,1024,MEM_RELEASE               ; 释放地址空间</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>内存状态测试:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpMemory DWORD 1024</span><br><span class="line">	lpString BYTE &quot;hello lyshark&quot;,0</span><br><span class="line">	lpStatus DWORD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		mov lpMemory,1024</span><br><span class="line">		lea eax,lpMemory</span><br><span class="line">		</span><br><span class="line">		invoke IsBadCodePtr,lpMemory          ; 内存的第一个字节是否可读</span><br><span class="line">		mov lpStatus,eax                      ; 可读返回0否则返回非0</span><br><span class="line">		</span><br><span class="line">		invoke IsBadReadPtr,lpMemory,1024     ; 测试前1024字节是否可读</span><br><span class="line">		mov lpStatus,eax                      ; 可读返回0否则返回非0</span><br><span class="line">		</span><br><span class="line">		invoke IsBadWritePtr,lpMemory,1024    ; 测试前1024字节是否可写</span><br><span class="line">		mov lpStatus,eax                      ; 可写返回0否则返回非0</span><br><span class="line">		</span><br><span class="line">		invoke IsBadStringPtr,addr lpString,sizeof lpString ; 测试字符串是否可读</span><br><span class="line">		mov lpStatus,eax                      ; 可读返回0否则返回非0</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="文件与磁盘函数"><a href="#文件与磁盘函数" class="headerlink" title="文件与磁盘函数"></a>文件与磁盘函数</h2><h3 id="◆文件相关函数◆"><a href="#◆文件相关函数◆" class="headerlink" title="◆文件相关函数◆"></a>◆文件相关函数◆</h3><p><strong>打开/关闭文件:</strong> 打开文件成功返回文件句柄,失败则返回error<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szFileName db &quot;e:\lyshark.log&quot;,0h    ; 打开的文件名称</span><br><span class="line">	hFile      dd ?                      ; 打开成功后返回的句柄</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateFile,addr szFileName,GENERIC_READ,FILE_SHARE_READ,0, \</span><br><span class="line">		OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line"></span><br><span class="line">		.if(eax != INVALID_HANDLE_VALUE)</span><br><span class="line">			mov hFile,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建文件:</strong> CREATE_ALWAYS=文件存在则清空内容,CREATE_NEW=文件存在则返回失败<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szNewFile db &quot;C:\lyshark.log&quot;,0h</span><br><span class="line">	hFile      dd ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateFile,addr szNewFile,GENERIC_WRITE,FILE_SHARE_READ,0, \</span><br><span class="line">		CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line">		</span><br><span class="line">		.if(eax != INVALID_HANDLE_VALUE)</span><br><span class="line">			mov hFile,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke CloseHandle,hFile</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>移动文件指针:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szFileName DB &quot;c:\lyshark.log&quot;,0h</span><br><span class="line">	hFileHandl DD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line"></span><br><span class="line">		invoke CreateFile,addr szFileName,GENERIC_READ,FILE_SHARE_READ,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line">		.if(eax != INVALID_HANDLE_VALUE)</span><br><span class="line">			mov hFileHandl,eax</span><br><span class="line">		.endif</span><br><span class="line"></span><br><span class="line">		invoke SetFilePointer,hFileHandl,0,NULL,FILE_CURRENT     ; eax=获取的文件指针位置</span><br><span class="line">		xor eax,eax</span><br><span class="line">		invoke SetFilePointer,hFileHandl,10,NULL,FILE_BEGIN      ; 将文件指针向后移动10个字节</span><br><span class="line">		xor eax,eax</span><br><span class="line">		invoke SetFilePointer,hFileHandl,0,NULL,FILE_CURRENT     ; 再次获取指针位置,eax=10</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>设置指针到末尾:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szFileName DB &quot;e:\lyshark.log&quot;,0h</span><br><span class="line">	hFileHandl DD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateFile,addr szFileName,GENERIC_READ,FILE_SHARE_READ,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line">		.if(eax != INVALID_HANDLE_VALUE)</span><br><span class="line">			mov hFileHandl,eax</span><br><span class="line">		.endif</span><br><span class="line"></span><br><span class="line">		invoke SetEndOfFile,hFileHandl                           ; 将文件位置设置到末尾</span><br><span class="line">		invoke SetFilePointer,hFileHandl,0,NULL,FILE_CURRENT     ; 获取指针位置</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>读取文件内容:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szFileName  DB &quot;C:\lyshark.log&quot;,0h</span><br><span class="line">	hFileHandle DD ?</span><br><span class="line">	szReadBuff  DB ?      ; 每次读取一个字节,放入该变量中</span><br><span class="line">	ByteRead    DB ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateFile,addr szFileName,GENERIC_READ,FILE_SHARE_READ,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line">		.if(eax != INVALID_HANDLE_VALUE)</span><br><span class="line">			mov hFileHandle,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke SetFilePointer,hFileHandle,1,NULL,FILE_BEGIN   ; 取第一个字符</span><br><span class="line">		invoke ReadFile,hFileHandle,addr szReadBuff,sizeof szReadBuff,addr ByteRead,0</span><br><span class="line">		mov al,[szReadBuff]                           ; 将取出来的字符放入al寄存器中</span><br><span class="line"></span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>写入文件内容:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szFileName  DB &quot;C:\lyshark.log&quot;,0h</span><br><span class="line">	hFileHandle DD ?                         ; 获取文件句柄</span><br><span class="line">	lpBuffer    DB &quot;hello lyshark&quot;,0h        ; 要写入的字符串</span><br><span class="line">	reWrite     DD ?                         ; 返回写入成功字节数</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateFile,addr szFileName,GENERIC_WRITE,FILE_SHARE_WRITE,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line">		.if(eax != INVALID_HANDLE_VALUE)</span><br><span class="line">			mov hFileHandle,eax</span><br><span class="line">		.endif</span><br><span class="line">		; 将lpBuffer中的数据写入到文件,写入大小为sizeof获取的大小.</span><br><span class="line">		invoke WriteFile,hFileHandle,addr lpBuffer,sizeof lpBuffer,addr reWrite,NULL</span><br><span class="line">		invoke FlushFileBuffers,hFileHandle    ; 强制刷新写入</span><br><span class="line"></span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取文件长度:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szFileName  DB &quot;E:\lyshark.log&quot;,0h</span><br><span class="line">	hFileHandle DD ?</span><br><span class="line">	FilesSize   DD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateFile,addr szFileName,GENERIC_READ,FILE_SHARE_READ,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line">		mov hFileHandle,eax</span><br><span class="line">		</span><br><span class="line">		invoke GetFileSize,hFileHandle,NULL      ; 取出文件的长度</span><br><span class="line">		mov FilesSize,eax                        ; 放入FilesSize里面</span><br><span class="line">		</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取文件日期:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szFileName  DB &quot;E:\lyshark.log&quot;,0h</span><br><span class="line">	hFileHandle DD ?</span><br><span class="line">	</span><br><span class="line">	create  FILETIME &lt;&gt;            ; 存储创建文件的日期</span><br><span class="line">	systime SYSTEMTIME &lt;&gt;          ; 存储转换后的文件日期</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateFile,addr szFileName,GENERIC_READ,FILE_SHARE_READ,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line">		mov hFileHandle,eax                                     ; 取出文件句柄</span><br><span class="line">		</span><br><span class="line">		invoke GetFileTime,hFileHandle,addr create,NULL,NULL    ; 只取出创建日期，其他的用NULL填充</span><br><span class="line">		invoke FileTimeToSystemTime,addr create,addr systime    ; 转换成常用格式</span><br><span class="line">		</span><br><span class="line">		mov ax,systime.wYear    ; 取出年份</span><br><span class="line">		mov bx,systime.wMonth   ; 取出月份</span><br><span class="line">		mov cx,systime.wDay     ; 取出天数</span><br><span class="line"></span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>修改文件日期:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szFileName  DB &quot;E:\lyshark.log&quot;,0h</span><br><span class="line">	hFileHandle DD ?</span><br><span class="line">	</span><br><span class="line">	create  FILETIME &lt;&gt;            ; 存储创建文件的日期</span><br><span class="line">	systime SYSTEMTIME &lt;&gt;          ; 存储转换后的文件日期</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateFile,addr szFileName,GENERIC_READ,FILE_SHARE_READ,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0</span><br><span class="line">		mov hFileHandle,eax                                     ; 取出文件句柄</span><br><span class="line">		mov systime.wYear,19      ; 先填写结构</span><br><span class="line">		mov systime.wMonth,19</span><br><span class="line">		</span><br><span class="line">		invoke SystemTimeToFileTime,addr systime,addr create  ; 转换成filetime</span><br><span class="line">		invoke SetFileTime,hFileHandle,addr create,NULL,NULL  ; 回写</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>拷贝/移动/删除/文件:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpSourceFile  DB &quot;C:\lyshark.log&quot;,0h</span><br><span class="line">	lpDestFile    DB &quot;E:\wang.log&quot;,0h</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke CopyFile,addr lpSourceFile,addr lpDestFile,TRUE   ; 拷贝文件</span><br><span class="line">		invoke MoveFile,addr lpDestFile,addr lpSourceFile        ; 移动文件</span><br><span class="line">		invoke DeleteFile,addr lpSourceFile</span><br><span class="line">		invoke DeleteFile,addr lpDestFile                        ; 删除文件</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆磁盘相关函数◆"><a href="#◆磁盘相关函数◆" class="headerlink" title="◆磁盘相关函数◆"></a>◆磁盘相关函数◆</h3><p><strong>显示所有驱动器:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpLength  BYTE  ?</span><br><span class="line">	lpDrives  DWORD 0 dup(1024)</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetLogicalDrives      ; 获取卷标</span><br><span class="line">		invoke GetLogicalDriveStrings,addr lpLength,addr lpDrives  ; 同上</span><br><span class="line">		lea esi,[lpDrives]            ; 显示C盘</span><br><span class="line">		lea esi,[lpDrives+4]          ; 显示D盘</span><br><span class="line">		</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取磁盘类型:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpDrive DB &quot;c:\&quot;,0</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetDriveType,addr lpDrive</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取磁盘详细信息:</strong>(有问题的)<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpRoot DB &quot;c:\&quot;,0h</span><br><span class="line">	lpBuffer DB 1024 dup(?)</span><br><span class="line">	dwSerial DD ?</span><br><span class="line">	lpType DB 1024 dup(?)</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetVolumeInformation,addr lpRoot, \</span><br><span class="line">		addr lpBuffer,1024,addr dwSerial,255, \</span><br><span class="line">		FILE_CASE_PRESERVED_NAMES,addr lpType,1024</span><br><span class="line">		</span><br><span class="line">		lea eax,lpRoot</span><br><span class="line">		lea ebx,lpBuffer</span><br><span class="line">		lea ecx,dwSerial</span><br><span class="line">		lea edx,lpType</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>检测逻辑驱动器字节:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpRoot DB &quot;c:\&quot;,0h</span><br><span class="line">	lpSect DD ?</span><br><span class="line">	lpByte DD ?</span><br><span class="line">	lpNumb DD ?</span><br><span class="line">	lpTota DD ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">	; 总容量 = 簇总数 * 每簇扇区数 * 每扇区字节数</span><br><span class="line">	; 空闲字节数 = 未使用的簇 * 每扇区数 * 每扇区字节数</span><br><span class="line">		invoke GetDiskFreeSpace,addr lpRoot,addr lpSect,addr lpByte,addr lpNumb,addr lpTota</span><br><span class="line">		</span><br><span class="line">		mov eax,lpSect     ; 返回每个簇的扇区数</span><br><span class="line">		mov eax,lpByte     ; 返回每扇区的字节数</span><br><span class="line">		mov eax,lpNumb     ; 返回未使用的簇的数量</span><br><span class="line">		mov eax,lpTota     ; 返回簇的总数</span><br><span class="line"></span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>获取当前目录:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpRoot DB ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke GetCurrentDirectory,1024,addr lpRoot    ; 获取当前目录</span><br><span class="line">		lea eax,lpRoot</span><br><span class="line">		</span><br><span class="line">		invoke GetTempPath,1024,addr lpRoot            ; 获取临时目录</span><br><span class="line">		lea eax,lpRoot</span><br><span class="line">		</span><br><span class="line">		invoke GetSystemDirectory,addr lpRoot,1024     ; 获取系统目录</span><br><span class="line">		lea eax,lpRoot</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建删除目录:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpRoot DB &quot;c:\windows\&quot;,0</span><br><span class="line">	szDir  DB &quot;c:\lyshark\wang&quot;,0</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke SetCurrentDirectory,addr lpRoot         ; 设置默认路径</span><br><span class="line">		</span><br><span class="line">		invoke CreateDirectory,addr szDir,NULL         ; 创建目录</span><br><span class="line">		invoke RemoveDirectory,addr szDir              ; 删除目录</span><br><span class="line">		invoke ExitProcess,0</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="进程与线程函数"><a href="#进程与线程函数" class="headerlink" title="进程与线程函数"></a>进程与线程函数</h2><h3 id="◆进程相关函数◆"><a href="#◆进程相关函数◆" class="headerlink" title="◆进程相关函数◆"></a>◆进程相关函数◆</h3><p><strong>创建进程:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szBuffer   DWORD ?</span><br><span class="line">	szFileName DWORD ?</span><br><span class="line">	szCmdLine DWORD ?</span><br><span class="line">	szBlank DWORD ?</span><br><span class="line">	stStartUp DWORD ?</span><br><span class="line">	stProcInfo DWORD ?</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke lstrcpy,addr szBuffer,addr szFileName</span><br><span class="line">		.if(szCmdLine)</span><br><span class="line">			invoke lstrcat,addr szBuffer,addr szBlank</span><br><span class="line">			invoke lstrcat,addr szBuffer,addr szCmdLine</span><br><span class="line">		.endif</span><br><span class="line">		invoke GetStartupInfo,addr stStartUp</span><br><span class="line">		invoke CreateProcess,NULL,addr szBuffer,NULL,NULL,NULL, \</span><br><span class="line">		NORMAL_PRIORITY_CLASS,NULL,NULL,addr stStrartUp,addr stProcInfo</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>取所有进程信息:</strong> 使用快照函数,一次性遍历出所有的进程列表.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	hSnapShot dd ?</span><br><span class="line">	stProcess PROCESSENTRY32 &lt;?&gt;</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke CreateToolhelp32Snapshot,TH32CS_SNAPPROCESS,0   ; 创建快照</span><br><span class="line">		mov hSnapShot,eax                                      ; 保存句柄</span><br><span class="line">		mov stProcess.dwSize,sizeof stProcess                  ; 保存快照大小</span><br><span class="line">		</span><br><span class="line">		invoke Process32First,hSnapShot,addr stProcess         ; 取第一个进程数据</span><br><span class="line">		.while(eax)                                            ; eax!=0则继续循环</span><br><span class="line">			invoke Process32Next,hSnapShot,addr stProcess      ; 取下一个进程数据</span><br><span class="line">		.endw</span><br><span class="line">			invoke CloseHandle,hSnapShot                       ; 关闭进程句柄</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>取指定进程PID:</strong> 获取xshell进程的PID号<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	FindID    DB &quot;Xshell&quot;,0h</span><br><span class="line">	ThreadID  DD ?</span><br><span class="line">	ProcessID DD ?          ; 获取到的进程号</span><br><span class="line">	</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">		invoke FindWindow,NULL,addr FindID</span><br><span class="line">		.if(FindID != 0)</span><br><span class="line">			mov ThreadID,eax</span><br><span class="line">		.endif</span><br><span class="line">		invoke GetWindowThreadProcessId, ThreadID,offset ProcessID</span><br><span class="line">		mov eax,ProcessID</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>内存示范例子:</strong> 请手动编译该例子,并命名为<code>lyshark.exe</code>,接下来的<code>读内存/写内存</code>例子将用它讲解.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">	.386p</span><br><span class="line">	.model flat,stdcall</span><br><span class="line">	option casemap:none</span><br><span class="line"></span><br><span class="line">include windows.inc</span><br><span class="line">include user32.inc</span><br><span class="line">include kernel32.inc</span><br><span class="line">includelib user32.lib</span><br><span class="line">includelib kernel32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	titles  DB &quot;box&quot;,0h</span><br><span class="line">	check_ok DB &quot;破解完成.&quot;,0h</span><br><span class="line">	check_err DB &quot;破解失败&quot;,0h</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		xor eax,eax</span><br><span class="line">		.if eax</span><br><span class="line">			invoke MessageBox,NULL,addr check_ok,addr titles,MB_OK</span><br><span class="line">		.else</span><br><span class="line">			invoke MessageBox,NULL,addr check_err,addr titles,MB_OK</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>读取进程数据:</strong> 读取指定的内存地址中的数据,并将其放入ReadBuf缓冲区中.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OEP equ 004198402                            ; 读取的范围</span><br><span class="line">.data</span><br><span class="line">	stStartUp STARTUPINFO &lt;&gt;             ; 初始化</span><br><span class="line">	stProInfo PROCESS_INFORMATION &lt;&gt;     ; 该进程的进程信息</span><br><span class="line">	ExeRun    DB &quot;C:\\lyshark.exe&quot;,0h    ; 要打开的进程名称</span><br><span class="line">	ReadBuf   DD ?                       ; 读取到的数据内容</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke GetStartupInfo,addr stStartUp</span><br><span class="line">		invoke CreateProcess,addr ExeRun,NULL,NULL,NULL,NULL,\</span><br><span class="line">		NORMAL_PRIORITY_CLASS,0,0,addr stStartUp,addr stProInfo</span><br><span class="line">		</span><br><span class="line">		.if(eax)</span><br><span class="line">		        ; 读取当前进程,读取内存地址为OEP,每次读取8个字节,读取到放入ReadBuf</span><br><span class="line">			invoke ReadProcessMemory,stProInfo.hProcess,OEP,addr ReadBuf,8,NULL</span><br><span class="line">			lea eax,ReadBuf</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>写入进程数据:</strong> 写入进程数据,将跳转替换为nop指令的机器码.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OEP equ 004198402                            ; 读取的范围</span><br><span class="line">.data</span><br><span class="line">	stStartUp STARTUPINFO &lt;&gt;             ; 初始化</span><br><span class="line">	stProInfo PROCESS_INFORMATION &lt;&gt;     ; 该进程的进程信息</span><br><span class="line">	ExeRun    DB &quot;C:\\lyshark.exe&quot;,0h    ; 要打开的进程名称</span><br><span class="line">	lpPatch   DB 90h,90h,90h,90h         ; 要替换的汇编指令</span><br><span class="line">	redPatch  DD ?                       ; 替换完后保存替换结果</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke GetStartupInfo,addr stStartUp</span><br><span class="line">		invoke CreateProcess,addr ExeRun,NULL,NULL,NULL,NULL,\</span><br><span class="line">		NORMAL_PRIORITY_CLASS,0,0,addr stStartUp,addr stProInfo</span><br><span class="line">		</span><br><span class="line">		.if(eax)</span><br><span class="line">		        ; 写入当前进程,写入内存地址为OEP,替换8个字节,替换成nop</span><br><span class="line">		        invoke WriteProcessMemory,stProInfo.hProcess,OEP,addr lpPatch,4,NULL</span><br><span class="line">		        .if(eax != 0)            ; 如果不等于0则说明补丁替换完成</span><br><span class="line">		        	invoke ReadProcessMemory,stProInfo.hProcess,OEP,addr redPatch,4,NULL</span><br><span class="line">		        	lea eax,redPatch ; 将补丁地址取出,并用OD分析,为9090则替换完成.</span><br><span class="line">		        .endif </span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆线程相关函数◆"><a href="#◆线程相关函数◆" class="headerlink" title="◆线程相关函数◆"></a>◆线程相关函数◆</h3><p><strong>创建线程函数:</strong> 默认情况下,线程创建后会被系统挂起,需要执行ResumeThread函数,将其放入前台.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	ThreadID DWORD ?              ; 保存返回线程ID</span><br><span class="line">	hThread  DWORD ?              ; 保存线程句柄</span><br><span class="line">.code</span><br><span class="line">	_MyThread proc lParam         ; lParam为传递的参数</span><br><span class="line">		xor eax,eax</span><br><span class="line">		ret</span><br><span class="line">	_MyThread endp</span><br><span class="line"></span><br><span class="line">	main PROC</span><br><span class="line">		invoke CreateThread,NULL,0,addr _MyThread,NULL,CREATE_SUSPENDED,addr ThreadID</span><br><span class="line">		.if(eax)</span><br><span class="line">			mov hThread,eax             ; 将线程句柄放入hThread</span><br><span class="line">		.endif</span><br><span class="line">		invoke ResumeThread, hThread    ; 运行这个线程</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建事件:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpEventName DWORD ?         ; 创建的时间名称</span><br><span class="line">	hEventID    DWORD ?         ; 成功后返回的句柄</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">	</span><br><span class="line">		invoke CreateEvent,NULL,TRUE,TRUE,addr lpEventName</span><br><span class="line">		.if(eax != NULL)</span><br><span class="line">			mov hEventID,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke WaitForSingleObject,addr hEventID,INFINITE  ; 等待一个事件</span><br><span class="line">		invoke SetEvent,addr hEventID    ; 将事件的状态设置为:&quot;置位&quot;</span><br><span class="line"></span><br><span class="line">		invoke ResetEvent,hEventID       ; 将事件的状态设置为:&quot;复位&quot;</span><br><span class="line">		invoke CloseHandle,hEventID      ; 关闭这个句柄</span><br><span class="line">		ret</span><br><span class="line">	main ENDP</span><br><span class="line">END main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="DLL与线程注入"><a href="#DLL与线程注入" class="headerlink" title="DLL与线程注入"></a>DLL与线程注入</h2><h3 id="◆创建动态链接库◆"><a href="#◆创建动态链接库◆" class="headerlink" title="◆创建动态链接库◆"></a>◆创建动态链接库◆</h3><p><strong>创建dll:</strong> 这里我们创建一个<code>lyshark.asm</code>.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">	.586</span><br><span class="line">	.model flat,stdcall</span><br><span class="line">	option casemap:none</span><br><span class="line"></span><br><span class="line">include windows.inc</span><br><span class="line">include kernel32.inc</span><br><span class="line">include user32.inc</span><br><span class="line">includelib kernel32.lib</span><br><span class="line">includelib user32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	lpText db &quot;hello lyshark&quot;,0</span><br><span class="line">	lpCapt db &quot;MsgBox&quot;,0</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	DllEntry PROC _hInstance,_dwReason,_dwReserved</span><br><span class="line">		mov eax,TRUE</span><br><span class="line">		ret</span><br><span class="line">	DllEntry ENDP</span><br><span class="line">	</span><br><span class="line">	_MsgBox PROC                          ; 无参数的信息框</span><br><span class="line">		invoke MessageBox,NULL,addr lpText,addr lpCapt,MB_OK</span><br><span class="line">		ret</span><br><span class="line">	_MsgBox ENDP</span><br><span class="line">	</span><br><span class="line">	_MySum PROC Num_x:DWORD,Num_y:DWORD   ; 一个加法计算的函数</span><br><span class="line">		mov eax,Num_x</span><br><span class="line">		add eax,Num_y</span><br><span class="line">		ret</span><br><span class="line">	_MySum endp</span><br><span class="line">end DllEntry</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建def:</strong> 然后在当前目录下创建一个<code>lyshark.def</code>文件,用来声明导入库的函数名.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">EXPORTS _MsgBox</span><br><span class="line">EXPORTS _MySum</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建inc文件:</strong> 在当前目录继续创建一个<code>lyshark.inc</code>文件,并写入相应的导入函数.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">_MsgBox PROTO</span><br><span class="line">_MySum  PROTO Num_X:DWORD,Num_Y:DWORD</span><br></pre></td></tr></table></figure></p>
+<p><strong>生成dll:</strong> 生成dll执行如下代码.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ml /c /coff lyshark.asm</span><br><span class="line">link /SUBSYSTEM:WINDOWS /RELEASE /DLL /DEF:lyshark.def /OUT:&quot;lyshark.dll&quot; &quot;lyshark.obj&quot;</span><br></pre></td></tr></table></figure></p>
+<p><strong>直接调用dll:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include lyshark.inc</span><br><span class="line">includelib lyshark.lib</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke _MsgBox</span><br><span class="line">		invoke _MySum,100,200</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>动态装载dll(无参):</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szMyDll        db &quot;lyshark.dll&quot;,0h   ; 装入的动态链接库名称</span><br><span class="line">	szMsgBox       db &quot;_MsgBox&quot;,0h       ; 装入的函数名（无参）</span><br><span class="line">	hLibMod        dd  ?                 ; dll的句柄</span><br><span class="line">	lpMsgBox       dd  ?                 ; 函数的地址</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke LoadLibrary,addr szMyDll ; 加载指定的dll</span><br><span class="line">		.if(eax)</span><br><span class="line">			mov hLibMod,eax</span><br><span class="line">			invoke GetProcAddress,hLibMod,addr szMsgBox</span><br><span class="line">			mov lpMsgBox,eax</span><br><span class="line">			call lpMsgBox         ; 调用MsgBox</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke FreeLibrary,hLibMod    ; 传递句柄,并释放dll</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>动态装载dll(有参):</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szMyDll   db &quot;lyshark.dll&quot;,0h   ; 装入的动态链接库名称</span><br><span class="line">	szMySum   db &quot;_MySum&quot;,0h        ; 装入的函数名（无参）</span><br><span class="line">	hLibMod   dd  ?                 ; dll的句柄</span><br><span class="line">	lpMySum   dd  ?                 ; 函数的地址</span><br><span class="line">	Num_X     dd 10                 ; 参数x=10</span><br><span class="line">	Num_Y     dd 20                 ; 参数y=20</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke LoadLibrary,addr szMyDll ; 加载指定的dll</span><br><span class="line">		.if(eax)</span><br><span class="line">			mov hLibMod,eax</span><br><span class="line">			invoke GetProcAddress,hLibMod,addr szMySum</span><br><span class="line">			mov lpMySum,eax</span><br><span class="line">			</span><br><span class="line">			push Num_Y           ; 压入第二个参数</span><br><span class="line">			push Num_X           ; 压入第一个参数</span><br><span class="line">			call lpMySum         ; 调用_MySum 函数</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke FreeLibrary,hLibMod    ; 传递句柄,并释放dll</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆远程线程DLL注入◆"><a href="#◆远程线程DLL注入◆" class="headerlink" title="◆远程线程DLL注入◆"></a>◆远程线程DLL注入◆</h3><p><strong>动态调用函数:</strong> 动态的加载并使用一个函数.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szDllKernel db &quot;Kernel32.dll&quot;,0h</span><br><span class="line">	szFunction  db &quot;GetVersion&quot;,0h</span><br><span class="line">	CallAddr    dd ?</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke GetModuleHandle,offset szDllKernel               ; 取出模块句柄</span><br><span class="line">		.if(eax != 0)</span><br><span class="line">			invoke GetProcAddress,eax,offset szFunction     ; 取出函数的地址</span><br><span class="line">			mov CallAddr,eax                                ; 保存函数地址</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		call CallAddr           ; 直接调用kernel32.GetVersion</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>编写DLL:</strong> 首先编写一个dLL用来测试<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">	.386</span><br><span class="line">	.model flat,stdcall</span><br><span class="line">	option casemap:none</span><br><span class="line"></span><br><span class="line">include windows.inc</span><br><span class="line">include user32.inc</span><br><span class="line">include kernel32.inc</span><br><span class="line">includelib user32.lib</span><br><span class="line">includelib kernel32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szText DB &quot;welcome to asm&quot;,0h</span><br><span class="line">	szCaption DB &quot;MsgBox&quot;,0h</span><br><span class="line">.code</span><br><span class="line"></span><br><span class="line">Main PROC</span><br><span class="line">	invoke MessageBox,NULL,addr szText,addr szCaption,MB_OK</span><br><span class="line">	ret</span><br><span class="line">Main endp</span><br><span class="line"></span><br><span class="line">DllEntry PROC _hInstance,_dwReason,_dwReserved</span><br><span class="line">	call Main</span><br><span class="line">	mov	eax,TRUE</span><br><span class="line">	ret</span><br><span class="line">DllEntry ENDP</span><br><span class="line">END DllEntry</span><br></pre></td></tr></table></figure></p>
+<p><strong>注入DLL:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	szMyDll        db &quot;\lyshark.dll&quot;,0h       ; 要注入的DLL</span><br><span class="line">	szDllKernel    db &quot;Kernel32.dll&quot;,0h</span><br><span class="line">	szLoadLibrary  db &quot;LoadLibraryA&quot;,0h</span><br><span class="line">	lpFileName     db &quot;Tutorial-i386&quot;,0h      ; 指定要注入进程</span><br><span class="line">	lpDllName      dd ?</span><br><span class="line">.data?</span><br><span class="line">	szMyDllFull    db MAX_PATH dup (?)</span><br><span class="line">	lpLoadLibrary  dd ?</span><br><span class="line">	dwProcessID    dd ?     </span><br><span class="line">	dwThreadID     dd ?</span><br><span class="line">	hProcess       dd ?</span><br><span class="line">.code</span><br><span class="line">	main PROC</span><br><span class="line">; 准备工作：获取dll的全路径文件名、获取LoadLibrary函数地址等</span><br><span class="line">		invoke GetCurrentDirectory,MAX_PATH,addr szMyDllFull</span><br><span class="line">		invoke lstrcat,addr szMyDllFull,addr szMyDll</span><br><span class="line">		invoke GetModuleHandle,addr szDllKernel</span><br><span class="line">		invoke GetProcAddress,eax,offset szLoadLibrary</span><br><span class="line">		mov lpLoadLibrary,eax</span><br><span class="line"></span><br><span class="line">; 查找文件管理器窗口并获取进程ID，然后打开进程</span><br><span class="line">		invoke FindWindow,NULL,addr lpFileName</span><br><span class="line">		invoke GetWindowThreadProcessId,eax,offset dwProcessID</span><br><span class="line">  		mov dwThreadID,eax</span><br><span class="line">  		invoke OpenProcess,PROCESS_ALL_ACCESS,FALSE,dwProcessID</span><br><span class="line">		mov hProcess,eax</span><br><span class="line"></span><br><span class="line">; 在进程中分配空间并将DLL文件名拷贝过去，然后创建一个LoadLibrary线程</span><br><span class="line">		invoke VirtualAllocEx,hProcess,NULL,MAX_PATH,MEM_COMMIT,PAGE_READWRITE</span><br><span class="line">		mov lpDllName,eax</span><br><span class="line">		invoke WriteProcessMemory,hProcess,eax,offset szMyDllFull,MAX_PATH,NULL</span><br><span class="line">		invoke CreateRemoteThread,hProcess,NULL,0,lpLoadLibrary,lpDllName,0,NULL</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆远程线程代码注入◆"><a href="#◆远程线程代码注入◆" class="headerlink" title="◆远程线程代码注入◆"></a>◆远程线程代码注入◆</h3><p><strong>注入器:</strong> 新建main.asm<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">	lpLoadLibrary      dd ?</span><br><span class="line">	lpGetProcAddress   dd ?</span><br><span class="line">	lpGetModuleHandle  dd ?</span><br><span class="line">	dwProcessID        dd ?</span><br><span class="line">	dwThreadID         dd ?</span><br><span class="line">	hProcess           dd ?</span><br><span class="line">	lpRemoteCode       dd ?</span><br><span class="line">.const</span><br><span class="line">	ProcHandle        db &quot;lyshark.exe&quot;,0h</span><br><span class="line">	KernelBase        db &quot;Kernel32.dll&quot;,0h</span><br><span class="line">	szLoadLibrary     db &quot;LoadLibraryA&quot;,0h</span><br><span class="line">	szGetProcAddress  db &quot;GetProcAddress&quot;,0h</span><br><span class="line">	szGetModuleHandle db &quot;GetModuleHandleA&quot;,0h</span><br><span class="line">.code</span><br><span class="line">include Macro.inc</span><br><span class="line">include ShellCode.asm</span><br><span class="line">	main proc</span><br><span class="line">		invoke GetModuleHandle,addr KernelBase</span><br><span class="line">		mov ebx,eax</span><br><span class="line">		invoke GetProcAddress,ebx,offset szLoadLibrary</span><br><span class="line">		mov lpLoadLibrary,eax</span><br><span class="line">		invoke GetProcAddress,ebx,offset szGetProcAddress</span><br><span class="line">		mov lpGetProcAddress,eax</span><br><span class="line">		invoke GetProcAddress,ebx,offset szGetModuleHandle</span><br><span class="line">		mov lpGetModuleHandle,eax</span><br><span class="line"></span><br><span class="line">		invoke FindWindow,NULL,addr ProcHandle</span><br><span class="line">		invoke GetWindowThreadProcessId,eax,offset dwProcessID</span><br><span class="line">		mov dwThreadID,eax</span><br><span class="line">		invoke OpenProcess,PROCESS_ALL_ACCESS,FALSE,dwProcessID</span><br><span class="line">		mov hProcess,eax</span><br><span class="line"></span><br><span class="line">		invoke VirtualAllocEx,hProcess,NULL,2048,MEM_COMMIT,PAGE_EXECUTE_READWRITE</span><br><span class="line">			.if eax</span><br><span class="line">				mov lpRemoteCode,eax</span><br><span class="line">				invoke WriteProcessMemory,hProcess,lpRemoteCode,offset REMOTE_CODE_START,1024,NULL</span><br><span class="line">				invoke WriteProcessMemory,hProcess,lpRemoteCode,offset lpLoadLibrary,sizeof dword * 3,NULL</span><br><span class="line">				mov eax,lpRemoteCode</span><br><span class="line">				add eax,offset _RemoteThread - offset REMOTE_CODE_START</span><br><span class="line">				invoke CreateRemoteThread,hProcess,NULL,0,eax,0,0,NULL</span><br><span class="line">				invoke CloseHandle,eax</span><br><span class="line">			.endif</span><br><span class="line">			invoke CloseHandle,hProcess	</span><br><span class="line">	invoke ExitProcess,NULL</span><br><span class="line">	ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>反转宏:</strong> Macro.inc 用来翻转参数,定义_invoke<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">; --------------------------------------------</span><br><span class="line">; 翻转参数字节序</span><br><span class="line">reverseArgs macro arglist:VARARG</span><br><span class="line">	LOCAL txt,count</span><br><span class="line">	txt TEXTEQU &lt;&gt;</span><br><span class="line">	count=0</span><br><span class="line">	for i,&lt;arglist&gt;</span><br><span class="line">		count = count+1</span><br><span class="line">		txt TEXTEQU @CatStr(i,&lt;!,&gt;,&lt;%txt&gt;)</span><br><span class="line">	endm</span><br><span class="line">	if count GT 0</span><br><span class="line">		txt SUBSTR txt,1,@SizeStr(%txt)-1</span><br><span class="line">	endif</span><br><span class="line">	exitm txt</span><br><span class="line">endm</span><br><span class="line">; --------------------------------------------</span><br><span class="line">; 创建类似于INVOKE的宏代码</span><br><span class="line">_invoke macro _Proc,args:VARARG</span><br><span class="line">	LOCAL count</span><br><span class="line">	count = 0</span><br><span class="line">%	for i,&lt; reverseArgs( args ) &gt;</span><br><span class="line">		count = count+1</span><br><span class="line">		push i</span><br><span class="line">	endm</span><br><span class="line">	call dword ptr _Proc    </span><br><span class="line">endm</span><br></pre></td></tr></table></figure></p>
+<p><strong>注入代码:</strong> shellcode.asm<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">REMOTE_CODE_START equ this byte</span><br><span class="line">_lpLoadLibrary      dd ?</span><br><span class="line">_lpGetProcAddress   dd ?</span><br><span class="line">_lpGetModuleHandle  dd ?</span><br><span class="line"></span><br><span class="line">; --------------------------------------------</span><br><span class="line">; 存放静态资源,比如常量,字符串等.</span><br><span class="line">_hInstance          dd ?</span><br><span class="line">_szShowTitle        db &quot;hello lyshark&quot;,0h</span><br><span class="line"></span><br><span class="line">; --------------------------------------------</span><br><span class="line">; 存放获取到的指针</span><br><span class="line">_lpDllUser          dd ?</span><br><span class="line">_lpMessageBox       dd ?</span><br><span class="line">; --------------------------------------------</span><br><span class="line">; 放入导入函数的字符串</span><br><span class="line">_szDllUser		db	&quot;user32.dll&quot;,0h</span><br><span class="line">_szMessageBox           db      &quot;MessageBoxA&quot;,0h,0</span><br><span class="line">; --------------------------------------------</span><br><span class="line">_RemoteThread proc uses ebx esi edi</span><br><span class="line">		LOCAL @hModule</span><br><span class="line">; --------------------------------------------</span><br><span class="line">; 计算指令的偏移地址,用ebx作为基址指针</span><br><span class="line">		call @F</span><br><span class="line">		@@:</span><br><span class="line">		pop ebx</span><br><span class="line">		sub ebx,offset @B</span><br><span class="line">; --------------------------------------------</span><br><span class="line">		_invoke [ebx + _lpGetModuleHandle],NULL         ; 取当前模块句柄</span><br><span class="line">		mov [ebx + _hInstance],eax</span><br><span class="line">		lea eax,[ebx + offset _szDllUser]           </span><br><span class="line">		_invoke [ebx + _lpGetModuleHandle],eax          ; 取user32.dll模块句柄</span><br><span class="line">		mov @hModule,eax</span><br><span class="line">; --------------------------------------------</span><br><span class="line">; 循环获取每个导入函数的地址,并放入指针变量保存</span><br><span class="line">		lea esi,[ebx + offset _szMessageBox]            ; 循环获取,从该函数起始地址处</span><br><span class="line">		lea edi,[ebx + offset _lpMessageBox]</span><br><span class="line">		.while TRUE</span><br><span class="line">			_invoke	[ebx + _lpGetProcAddress],@hModule,esi</span><br><span class="line">			mov [edi],eax       ; 获取到函数地址后,放入导入函数字符串中</span><br><span class="line">			add edi,4           ; 每次递增4字节,指向下一个函数,遇到0则停止</span><br><span class="line">			@@:</span><br><span class="line">			lodsb</span><br><span class="line">			or al,al</span><br><span class="line">			jnz @B</span><br><span class="line">			.break .if !byte ptr [esi]</span><br><span class="line">		.endw</span><br><span class="line">; --------------------------------------------</span><br><span class="line">		;lea esi,[ebx+ offset _szMessageBox]            ; 取msgbox模块地址</span><br><span class="line">		;_invoke [ebx+_lpGetProcAddress],@hModule,esi   ; 获取地址</span><br><span class="line">		;mov [ebx+_lpMessageBox],eax                    ; 存入变量中</span><br><span class="line">		lea esi,[ebx + offset _szShowTitle]             ; 获取弹窗资源</span><br><span class="line">		_invoke [ebx + _lpMessageBox],0,esi,eax,0       ; 调用信息框</span><br><span class="line">		ret</span><br><span class="line">_RemoteThread endp</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆创建Windows钩子◆"><a href="#◆创建Windows钩子◆" class="headerlink" title="◆创建Windows钩子◆"></a>◆创建Windows钩子◆</h3><p><strong>创建DLL文件:</strong> hookdll.dll<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">	.386 </span><br><span class="line">	.model flat,stdcall </span><br><span class="line">	option casemap:none </span><br><span class="line"></span><br><span class="line">include windows.inc</span><br><span class="line">include user32.inc</span><br><span class="line">include kernel32.inc</span><br><span class="line">includelib user32.lib</span><br><span class="line">includelib kernel32.lib</span><br><span class="line"></span><br><span class="line">.data?</span><br><span class="line">	hInstdll dd ?          ; dll句柄</span><br><span class="line">	hHook    dd ?          ; 钩子句柄</span><br><span class="line">	szAscii  db 5 dup (?)</span><br><span class="line">.code</span><br><span class="line">; ------------------------------------------------------------------</span><br><span class="line">; 钩子回调函数,这里按键后,弹出信息框提示</span><br><span class="line">CallBack proc nCode:DWORD,wParam:DWORD,lParam:DWORD</span><br><span class="line">	LOCAL @szKeyState[256]:byte</span><br><span class="line">	invoke CallNextHookEx,hHook,nCode,wParam,lParam </span><br><span class="line">	invoke GetKeyboardState,addr @szKeyState</span><br><span class="line">	invoke GetKeyState,VK_SHIFT</span><br><span class="line">	mov @szKeyState+VK_SHIFT,al</span><br><span class="line">	mov ecx,lParam</span><br><span class="line">	shr ecx,16</span><br><span class="line">	invoke ToAscii,wParam,ecx,addr @szKeyState,addr szAscii,0</span><br><span class="line">	mov byte ptr szAscii [eax],0</span><br><span class="line">	invoke MessageBox,NULL,addr wParam,0,MB_OK    ; 弹出信息框</span><br><span class="line">	ret</span><br><span class="line">CallBack endp</span><br><span class="line">; ------------------------------------------------------------------</span><br><span class="line">; 加载钩子,安装hook的子程序</span><br><span class="line">installhook proc</span><br><span class="line">	invoke SetWindowsHookEx,WH_KEYBOARD,addr CallBack,hInstdll,NULL</span><br><span class="line">	mov hHook,eax</span><br><span class="line">	ret</span><br><span class="line">installhook endp</span><br><span class="line">; ------------------------------------------------------------------</span><br><span class="line">; 卸载钩子,清除hook的子程序</span><br><span class="line">uninstallhook proc</span><br><span class="line">	invoke UnhookWindowsHookEx,hHook</span><br><span class="line">	ret</span><br><span class="line">uninstallhook endp</span><br><span class="line">; ------------------------------------------------------------------</span><br><span class="line">; DllMain 程序入口函数</span><br><span class="line">	DllMain proc _hInstance:HINSTANCE,_dwReason:DWORD, _dwResverved:DWORD</span><br><span class="line">		.if(_dwReason == DLL_PROCESS_ATTACH)</span><br><span class="line">			push _hInstance</span><br><span class="line">			pop hInstdll</span><br><span class="line">		.elseif(_dwReason == DLL_PROCESS_DETACH)</span><br><span class="line">			call uninstallhook</span><br><span class="line">		.endif</span><br><span class="line">			mov eax,TRUE</span><br><span class="line">			ret</span><br><span class="line">	DllMain endp</span><br><span class="line">end DllMain</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建inc文件:</strong> hookdll.inc<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">installhook proto</span><br><span class="line">uninstallhook proto</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建def:</strong> hookdll.def,并将目录下的hook.dll,hook.inc,hook.lib 拷贝出来.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LIBRARY hookdll</span><br><span class="line">EXPORTS installhook</span><br><span class="line">EXPORTS uninstallhook</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建主程序:</strong> 创建main.asm文件,并将hookdll.dll,hookdll.inc,hookdll.lib拷贝到目录下.<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include hookdll.inc</span><br><span class="line">includelib hookdll.lib</span><br><span class="line"></span><br><span class="line">.data?</span><br><span class="line">	hInstance dd ?</span><br><span class="line">	uMsg MSG &lt;?&gt;</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke installhook</span><br><span class="line">		invoke GetModuleHandle,NULL</span><br><span class="line">		mov hInstance,eax</span><br><span class="line">		.while(TRUE)</span><br><span class="line">			invoke GetMessage,addr uMsg,NULL,0,0</span><br><span class="line">			invoke TranslateMessage,addr uMsg</span><br><span class="line">			invoke DispatchMessage,addr uMsg</span><br><span class="line">		.endw</span><br><span class="line">		invoke uninstallhook</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="注册表和INI文件"><a href="#注册表和INI文件" class="headerlink" title="注册表和INI文件"></a>注册表和INI文件</h2><h3 id="◆注册表相关◆"><a href="#◆注册表相关◆" class="headerlink" title="◆注册表相关◆"></a>◆注册表相关◆</h3><p><strong>遍历子键:</strong> HKEY_LOCAL_MACHINE中的子键<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include msvcrt.inc</span><br><span class="line">includelib msvcrt.lib</span><br><span class="line">include advapi32.inc</span><br><span class="line">includelib advapi32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	dwIndex   dd ?</span><br><span class="line">	dwSize    dd ?</span><br><span class="line">	szBuffer  db 256 dup(?)</span><br><span class="line">	PrintText db &quot;%s&quot;,0ah</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		mov dwIndex,0</span><br><span class="line">		.while(TRUE)</span><br><span class="line">			mov dwSize,offset szBuffer</span><br><span class="line">			invoke RegEnumKeyEx,HKEY_LOCAL_MACHINE,dwIndex,addr szBuffer,addr dwSize, \</span><br><span class="line">					NULL,NULL,NULL,NULL</span><br><span class="line">			.break .if eax == ERROR_NO_MORE_ITEMS</span><br><span class="line">			invoke crt_printf,addr PrintText,addr szBuffer</span><br><span class="line">			inc dwIndex</span><br><span class="line">		.endw</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建键值:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include advapi32.inc</span><br><span class="line">includelib advapi32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szKeyPATH    db &quot;Software\\Microsoft\\Windows\\CurrentVersion\\Run&quot;,0h</span><br><span class="line">	szValueName  db &quot;AutoRun Shell&quot;,0h</span><br><span class="line">	szFileName   db MAX_PATH dup(?)</span><br><span class="line">.code</span><br><span class="line">_RegSetValue proc _lpszKey,_lpszValueName,_lpszValue,_dwValueType,_dwSize</span><br><span class="line">		LOCAL @hKey</span><br><span class="line">		invoke RegCreateKey,HKEY_LOCAL_MACHINE,_lpszKey,addr @hKey</span><br><span class="line">		.if (eax == ERROR_SUCCESS)</span><br><span class="line">			invoke	RegSetValueEx,@hKey,_lpszValueName,NULL,\</span><br><span class="line">				_dwValueType,_lpszValue,_dwSize</span><br><span class="line">			invoke RegCloseKey,@hKey</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">_RegSetValue	endp</span><br><span class="line"></span><br><span class="line">	main proc</span><br><span class="line">		invoke GetModuleFileName,NULL,addr szFileName,MAX_PATH  ; 获取文件全路径</span><br><span class="line">		inc eax</span><br><span class="line">		invoke _RegSetValue,addr szKeyPATH,addr szValueName,addr szFileName,REG_SZ,eax</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>删除键值:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include advapi32.inc</span><br><span class="line">includelib advapi32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szKeyPATH   db &quot;Software\\Microsoft\\Windows\\CurrentVersion\\Run&quot;,0h</span><br><span class="line">	szValueName db &quot;AutoRun Shell&quot;,0h</span><br><span class="line">.code</span><br><span class="line">_RegDelValue proc _lpszKey,_lpszValueName</span><br><span class="line">		LOCAL @hKey</span><br><span class="line">		invoke RegOpenKeyEx,HKEY_LOCAL_MACHINE,_lpszKey,NULL,KEY_WRITE,addr @hKey</span><br><span class="line">		.if(eax == ERROR_SUCCESS)</span><br><span class="line">			invoke RegDeleteValue,@hKey,_lpszValueName</span><br><span class="line">			invoke RegCloseKey,@hKey</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">_RegDelValue endp</span><br><span class="line"></span><br><span class="line">	main proc</span><br><span class="line">		invoke _RegDelValue,addr szKeyPATH,addr szValueName</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建子键</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include advapi32.inc</span><br><span class="line">includelib advapi32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	lpszKey    db &quot;Software\Microsoft\\Windows\\CurrentVersion\\Run\\&quot;,0h</span><br><span class="line">	lpszSubKey db &quot;MySub&quot;,0h</span><br><span class="line">.code</span><br><span class="line">_RegCreateKey proc _lpszKey,_lpszSubKeyName</span><br><span class="line">		LOCAL @hKey,@hSubkey,@dwDisp</span><br><span class="line">		invoke RegOpenKeyEx,HKEY_LOCAL_MACHINE,_lpszKey,NULL,KEY_CREATE_SUB_KEY,addr @hKey</span><br><span class="line">		.if eax == ERROR_SUCCESS</span><br><span class="line">			invoke RegCreateKeyEx,@hKey,_lpszSubKeyName,NULL,NULL,\</span><br><span class="line">				NULL,NULL,NULL,addr @hSubkey,addr @dwDisp</span><br><span class="line">			invoke RegCloseKey,@hKey</span><br><span class="line">			invoke RegCloseKey,@hSubkey</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">_RegCreateKey endp</span><br><span class="line"></span><br><span class="line">	main proc</span><br><span class="line">		invoke _RegCreateKey,addr lpszKey,addr lpszSubKey</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>删除子键：</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include advapi32.inc</span><br><span class="line">includelib advapi32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	lpszKey    db &quot;Software\Microsoft\\Windows\\CurrentVersion\\Run\\&quot;,0h</span><br><span class="line">	lpszSubKey db &quot;MySub&quot;,0h</span><br><span class="line">.code</span><br><span class="line">_RegDelSubKey proc _lpszKey,_lpszSubKeyName</span><br><span class="line">		LOCAL @hKey</span><br><span class="line">		invoke RegOpenKeyEx,HKEY_LOCAL_MACHINE,_lpszKey,NULL,KEY_WRITE,addr @hKey</span><br><span class="line">		.if eax == ERROR_SUCCESS</span><br><span class="line">			invoke RegDeleteKey,@hKey,_lpszSubKeyName</span><br><span class="line">			invoke RegCloseKey,@hKey</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">_RegDelSubKey endp</span><br><span class="line"></span><br><span class="line">	main proc</span><br><span class="line">		invoke _RegDelSubKey,addr lpszKey,addr lpszSubKey</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>读取键值：</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include advapi32.inc</span><br><span class="line">includelib advapi32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	lpDwSize  dd 1024</span><br><span class="line">	lpValue   db 1024 dup(?)</span><br><span class="line">	szKeyPATH   db &quot;Software\\Microsoft\\Windows\\CurrentVersion\\Run\\&quot;,0h</span><br><span class="line">	szValueName db &quot;IgfxTray&quot;,0h</span><br><span class="line">.code</span><br><span class="line">_RegQueryValue proc _lpszKey,_lpszValueName,_lpszValue,_lpdwSize,_lpdwType</span><br><span class="line">		LOCAL @hKey,@dwReturn</span><br><span class="line">		mov @dwReturn,-1</span><br><span class="line">		invoke RegOpenKeyEx,HKEY_LOCAL_MACHINE,_lpszKey,NULL,\</span><br><span class="line">			KEY_QUERY_VALUE,addr @hKey</span><br><span class="line">		.if eax == ERROR_SUCCESS</span><br><span class="line">			invoke RegQueryValueEx,@hKey,_lpszValueName,NULL,_lpdwType,\</span><br><span class="line">				_lpszValue,_lpdwSize</span><br><span class="line">			mov @dwReturn,eax</span><br><span class="line">			invoke RegCloseKey,@hKey</span><br><span class="line">		.endif</span><br><span class="line">		mov eax,@dwReturn</span><br><span class="line">		ret</span><br><span class="line">_RegQueryValue endp</span><br><span class="line"></span><br><span class="line">	main proc</span><br><span class="line">		invoke _RegQueryValue,addr szKeyPATH,addr szValueName,addr lpValue,addr lpDwSize,0</span><br><span class="line">		lea eax,lpValue</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>设置开机自启动:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include advapi32.inc</span><br><span class="line">includelib advapi32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szhKey         dd ?</span><br><span class="line">	szFileName     db MAX_PATH dup(?)                                        ; 获取当前路径</span><br><span class="line">	szKeyAutoRun   db &quot;Software\\Microsoft\\Windows\\CurrentVersion\\Run&quot;,0h ; 写入子键</span><br><span class="line">	szValueAutoRun db &quot;AutoRun Shell&quot;,0h                                     ; 写入的名称</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke GetModuleFileName,NULL,addr szFileName,MAX_PATH  ; 获取文件全路径</span><br><span class="line">		invoke RegCreateKey,HKEY_LOCAL_MACHINE,addr szKeyAutoRun,addr szhKey</span><br><span class="line">		.if(eax == ERROR_SUCCESS)</span><br><span class="line">			invoke RegSetValueEx,szhKey,addr szValueAutoRun,NULL,REG_SZ, \</span><br><span class="line">			addr szFileName,sizeof szFileName</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<h3 id="◆INI文件相关◆"><a href="#◆INI文件相关◆" class="headerlink" title="◆INI文件相关◆"></a>◆INI文件相关◆</h3><p><strong>创建INI:</strong> Option.ini<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[lyshark]         ; 字段1</span><br><span class="line">X=1024</span><br><span class="line">Y=2048</span><br><span class="line">Z=4096</span><br><span class="line">[IniDemo]         ; 字段2</span><br><span class="line">StringKey=hello,lyshark!</span><br><span class="line">IntKey=123123</span><br><span class="line">ToString=lyshark</span><br></pre></td></tr></table></figure></p>
+<p><strong>遍历Section列表:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include msvcrt.inc</span><br><span class="line">includelib msvcrt.lib</span><br><span class="line">.data</span><br><span class="line">	szStrlen     dd ?</span><br><span class="line">	szBuffer1    db 20480 dup(?)</span><br><span class="line">	szININame    db &quot;.\Option.ini&quot;,0h</span><br><span class="line">	szFmtSection db &quot;[%s]&quot;,0h</span><br><span class="line">	PrintText    db &quot;%s &quot;,0ah</span><br><span class="line">	</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		LOCAL @szBuffer[256]:byte</span><br><span class="line">		invoke GetPrivateProfileSectionNames,addr szBuffer1,sizeof szBuffer1,addr szININame</span><br><span class="line">		mov esi,offset szBuffer1</span><br><span class="line">		.while byte ptr [esi]</span><br><span class="line">			invoke wsprintf,addr @szBuffer,addr szFmtSection,esi</span><br><span class="line">			invoke crt_printf,addr PrintText,esi          ; 打印键值</span><br><span class="line">			invoke lstrlen,esi</span><br><span class="line">			add esi,eax</span><br><span class="line">			inc esi</span><br><span class="line">		.endw</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>遍历键值对</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include msvcrt.inc</span><br><span class="line">includelib msvcrt.lib</span><br><span class="line">.data</span><br><span class="line">	szStrlen     dd ?</span><br><span class="line">	szBuffer     db 2048 dup(?)</span><br><span class="line">	szININame    db &quot;.\Option.ini&quot;,0h    ; 指定要遍历的文件</span><br><span class="line">	szPrintKey   db &quot;lyshark&quot;,0h         ; 指定要遍历的key</span><br><span class="line">	szFmtSection db &quot;[%s]&quot;,0h</span><br><span class="line">	PrintText    db &quot;%s &quot;,0ah</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke GetPrivateProfileSection,addr szPrintKey,addr szBuffer,sizeof szBuffer,addr szININame</span><br><span class="line">		mov edi,offset szBuffer</span><br><span class="line">		.while byte ptr [edi]</span><br><span class="line">			invoke crt_printf,addr PrintText,edi   ; 打印key</span><br><span class="line">			invoke lstrlen,edi</span><br><span class="line">			add edi,eax</span><br><span class="line">			inc edi</span><br><span class="line">		.endw</span><br><span class="line">		invoke lstrlen,esi</span><br><span class="line">		add esi,eax</span><br><span class="line">		inc esi</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>拼接并打印字符串:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include masm32.inc</span><br><span class="line">includelib masm32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szBuffer  db 2048 dup(?)       ; 保存当前路径</span><br><span class="line">	szININame db &quot;\Option.ini&quot;,0h  ; 配置文件路径</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke GetCurrentDirectory,MAX_PATH,addr szBuffer</span><br><span class="line">		mov esi,offset szBuffer</span><br><span class="line">		invoke lstrlen,esi</span><br><span class="line">		mov ecx,offset szININame</span><br><span class="line">		.if byte ptr [esi+eax-1] == &apos;\&apos;</span><br><span class="line">			inc ecx</span><br><span class="line">		.endif</span><br><span class="line">			invoke lstrcat,esi,ecx</span><br><span class="line">			invoke StdOut, eax      ; 打印拼接后的字符串</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>读取:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line"></span><br><span class="line">	szININame   db &quot;.\Option.ini&quot;,0h       ; 指定要遍历的文件</span><br><span class="line">	szSecPos    db &quot;IniDemo&quot;,0h            ; 指定要遍历的key</span><br><span class="line">	szKeyInt    db &quot;IntKey&quot;,0h             ; 要读取的整数字段值</span><br><span class="line">	szKeyStr    db &quot;StringKey&quot;,0h          ; 要读取的字符串字段</span><br><span class="line">	szBuffer    db 2048 dup(?)</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke GetPrivateProfileInt,addr szSecPos,addr szKeyInt,50,addr szININame  ; 读取整数</span><br><span class="line">		invoke GetPrivateProfileString,addr szSecPos,addr szKeyStr,0, \</span><br><span class="line">		addr szBuffer,sizeof szBuffer,addr szININame                               ; 读取字符串</span><br><span class="line">		lea eax,szBuffer</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>添加/删除键值:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include masm32.inc</span><br><span class="line">includelib masm32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szBuffer  db 2048 dup(?)       ; 保存当前路径</span><br><span class="line">	szININame db &quot;.\Option.ini&quot;,0h  ; 配置文件路径</span><br><span class="line">	szAppName db &quot;IniDemo&quot;,0h       ; 字段为IniDemo</span><br><span class="line">	lpAppKey  db &quot;Temp&quot;,0h          ; 键值对为Temp</span><br><span class="line">	lpAppStr  db &quot;app temp&quot;,0h      ; 键值对值</span><br><span class="line">	lpAppNew  db &quot;hello temp&quot;,0h    ; 新的键值对</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		; 在IniDemo中添加 Temp=apptemp</span><br><span class="line">		invoke WritePrivateProfileString,addr szAppName,addr lpAppKey,addr lpAppStr,addr szININame</span><br><span class="line">		; 将IniDemo中的Temp=app temp修改为Temp=hello temp</span><br><span class="line">		invoke WritePrivateProfileString,addr szAppName,addr lpAppKey,addr lpAppNew,addr szININame</span><br><span class="line">		; 删除IniDemo中的Temp键值对</span><br><span class="line">		invoke WritePrivateProfileString,addr szAppName,addr lpAppKey,NULL,addr szININame</span><br><span class="line">		; 清空IniDemo底下的所有键值对</span><br><span class="line">		invoke WritePrivateProfileString,addr szAppName,NULL,NULL,addr szININame</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="通用对话框"><a href="#通用对话框" class="headerlink" title="通用对话框"></a>通用对话框</h2><p><strong>设置页面对话框:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include Comdlg32.inc</span><br><span class="line">includelib Comdlg32.lib</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		LOCAL @stPS:PAGESETUPDLG</span><br><span class="line">		invoke RtlZeroMemory,addr @stPS,sizeof @stPS</span><br><span class="line">		mov @stPS.lStructSize,sizeof @stPS</span><br><span class="line">		mov @stPS.hwndOwner,0</span><br><span class="line">		invoke PageSetupDlg,addr @stPS</span><br><span class="line">		.if eax &amp;&amp; @stPS.hDevMode</span><br><span class="line">			mov eax,@stPS.hDevMode</span><br><span class="line">			mov eax,[eax]</span><br><span class="line">			invoke MessageBox,0,eax,0,MB_OK</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>打开对话框:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include Comdlg32.inc</span><br><span class="line">includelib Comdlg32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szFilter   db &apos;Text Files(*.txt)&apos;,0,&apos;*.txt&apos;,0,&apos;All Files(*.*)&apos;,0,&apos;*.*&apos;,0,0</span><br><span class="line">	szFileName db MAX_PATH dup (?)</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		LOCAL @stOF:OPENFILENAME</span><br><span class="line">		invoke RtlZeroMemory,addr @stOF,sizeof @stOF</span><br><span class="line">		mov @stOF.lStructSize,sizeof @stOF</span><br><span class="line">		mov @stOF.hwndOwner,eax</span><br><span class="line">		mov @stOF.lpstrFilter,offset szFilter</span><br><span class="line">		mov @stOF.lpstrFile,offset szFileName</span><br><span class="line">		mov @stOF.nMaxFile,MAX_PATH</span><br><span class="line">		mov @stOF.Flags,OFN_FILEMUSTEXIST or OFN_PATHMUSTEXIST</span><br><span class="line">		invoke GetOpenFileName,addr @stOF</span><br><span class="line">		.if eax</span><br><span class="line">			invoke MessageBox,NULL,addr szFileName,0,MB_OK</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>保存对话框:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include Comdlg32.inc</span><br><span class="line">includelib Comdlg32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	szFilter      db &apos;Text Files(*.txt)&apos;,0,&apos;*.txt&apos;,0,&apos;All Files(*.*)&apos;,0,&apos;*.*&apos;,0,0</span><br><span class="line">	szFileName    db MAX_PATH dup (?)</span><br><span class="line">	szDefExt      db &apos;txt&apos;,0</span><br><span class="line">	szSaveCaption db &apos;请输入保存的文件名&apos;,0</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		LOCAL @stOF:OPENFILENAME</span><br><span class="line">		invoke RtlZeroMemory,addr @stOF,sizeof @stOF</span><br><span class="line">		mov @stOF.lStructSize,sizeof @stOF</span><br><span class="line">		mov @stOF.hwndOwner,0</span><br><span class="line">		mov @stOF.lpstrFilter,offset szFilter</span><br><span class="line">		mov @stOF.lpstrFile,offset szFileName</span><br><span class="line">		mov @stOF.nMaxFile,MAX_PATH</span><br><span class="line">		mov @stOF.Flags,OFN_PATHMUSTEXIST</span><br><span class="line">		mov @stOF.lpstrDefExt,offset szDefExt</span><br><span class="line">		mov @stOF.lpstrTitle,offset szSaveCaption</span><br><span class="line">		invoke GetSaveFileName,addr @stOF</span><br><span class="line">		.if eax</span><br><span class="line">			invoke MessageBox,NULL,addr szFileName,0,MB_OK</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>选择颜色:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include Comdlg32.inc</span><br><span class="line">includelib Comdlg32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	dwBackColor     dd ?</span><br><span class="line">	dwCustColors    dd 16 dup (?)</span><br><span class="line">	szBuffer        db 1024 dup (?)</span><br><span class="line">	szFormatColor   db &quot;您选择的颜色值：%08x&quot;,0</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		LOCAL @stCC:CHOOSECOLOR</span><br><span class="line">		invoke RtlZeroMemory,addr @stCC,sizeof @stCC</span><br><span class="line">		mov @stCC.lStructSize,sizeof @stCC</span><br><span class="line">		mov @stCC.hwndOwner,0</span><br><span class="line">		push dwBackColor</span><br><span class="line">		pop @stCC.rgbResult</span><br><span class="line">		mov @stCC.Flags,CC_RGBINIT or CC_FULLOPEN</span><br><span class="line">		mov @stCC.lpCustColors,offset dwCustColors</span><br><span class="line">		invoke	ChooseColor,addr @stCC</span><br><span class="line">		.if eax</span><br><span class="line">			push @stCC.rgbResult</span><br><span class="line">			pop dwBackColor</span><br><span class="line">			invoke wsprintf,addr szBuffer,addr szFormatColor,dwBackColor</span><br><span class="line">			invoke MessageBox,NULL,addr szBuffer,0,MB_OK</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><strong>选择字体:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">include Comdlg32.inc</span><br><span class="line">includelib Comdlg32.lib</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	stLogFont      LOGFONT &lt;?&gt;</span><br><span class="line">	dwFontColor    dd ?</span><br><span class="line">	szBuffer       db 1024 dup (?)</span><br><span class="line">	szFormatFont   db &apos;字体名称：%s&apos;,0dh,0ah</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		LOCAL @stCF:CHOOSEFONT</span><br><span class="line">		invoke RtlZeroMemory,addr @stCF,sizeof @stCF</span><br><span class="line">		mov @stCF.lStructSize,sizeof @stCF</span><br><span class="line">		mov @stCF.hwndOwner,0</span><br><span class="line">		mov @stCF.lpLogFont,offset stLogFont</span><br><span class="line">		push dwFontColor</span><br><span class="line">		pop @stCF.rgbColors</span><br><span class="line">		mov @stCF.Flags,CF_SCREENFONTS or CF_INITTOLOGFONTSTRUCT or CF_EFFECTS</span><br><span class="line">		invoke ChooseFont,addr @stCF</span><br><span class="line">		.if eax</span><br><span class="line">			push @stCF.rgbColors</span><br><span class="line">			pop dwFontColor</span><br><span class="line">			invoke wsprintf,addr szBuffer,addr szFormatFont,addr stLogFont.lfFaceName,\</span><br><span class="line">				dwFontColor,@stCF.iPointSize</span><br><span class="line">			invoke MessageBox,NULL,addr szBuffer,0,MB_OK</span><br><span class="line">		.endif</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+<h2 id="网络相关函数"><a href="#网络相关函数" class="headerlink" title="网络相关函数"></a>网络相关函数</h2><p><strong>服务端:</strong><br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">ip_addr=(<span class="string">"127.0.0.1"</span>,<span class="number">6666</span>)</span><br><span class="line"></span><br><span class="line">server = socket.socket()</span><br><span class="line">server.bind(ip_addr)</span><br><span class="line">server.listen(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    conn,addr=server.accept()</span><br><span class="line">    print(addr)</span><br><span class="line">    send_data = input(<span class="string">"input:"</span>)</span><br><span class="line">    conn.send(bytes(send_data,encoding=<span class="string">"ascii"</span>))</span><br><span class="line"></span><br><span class="line">    recv_data = conn.recv(<span class="number">1024</span>)</span><br><span class="line">    print(str(recv_data, encoding=<span class="string">"utf-8"</span>))</span><br></pre></td></tr></table></figure></p>
+<p><strong>客户端:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">	.386</span><br><span class="line">	.model flat,stdcall</span><br><span class="line">	option casemap:none</span><br><span class="line"></span><br><span class="line">include windows.inc</span><br><span class="line">include user32.inc</span><br><span class="line">include ws2_32.inc</span><br><span class="line">include kernel32.inc</span><br><span class="line">includelib user32.lib</span><br><span class="line">includelib kernel32.lib</span><br><span class="line">includelib ws2_32.lib</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">TCP_PORT equ 6666</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	WSAData  WSADATA &lt;&gt;</span><br><span class="line">	stSin sockaddr_in &lt;&gt;</span><br><span class="line">	szServer byte &quot;127.0.0.1&quot;,0h</span><br><span class="line">	sock dd ?</span><br><span class="line">	Buff BYTE 256 dup (?)                ; 接收数据的缓冲区</span><br><span class="line">	Send BYTE &quot;hello&quot;,0h                 ; 发送数据缓冲区</span><br><span class="line"></span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke WSAStartup,0202h,addr WSAData</span><br><span class="line">		invoke socket,AF_INET, SOCK_STREAM, 0</span><br><span class="line">		.if(eax != INVALID_SOCKET)</span><br><span class="line">			mov sock,eax</span><br><span class="line">		.endif</span><br><span class="line">		mov stSin.sin_family,AF_INET</span><br><span class="line">		invoke htons,TCP_PORT</span><br><span class="line">		mov stSin.sin_port,ax</span><br><span class="line">		invoke inet_addr,addr szServer</span><br><span class="line">		mov stSin.sin_addr,eax</span><br><span class="line">		invoke connect,sock,addr stSin,sizeof stSin    ; 连接套接字</span><br><span class="line">		</span><br><span class="line">		invoke recv,sock,addr Buff,sizeof Buff,0       ; 接收内容</span><br><span class="line">		lea eax,Buff</span><br><span class="line">		invoke send,sock,addr Send,sizeof Send,0       ; 发送数据</span><br><span class="line">		</span><br><span class="line"></span><br><span class="line">		invoke closesocket,sock</span><br><span class="line">		invoke WSACleanup</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>改进版</p>
+<p><strong>服务端:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import socket</span><br><span class="line"></span><br><span class="line">ip_addr=(&quot;127.0.0.1&quot;,6666)</span><br><span class="line"></span><br><span class="line">server = socket.socket()</span><br><span class="line">server.bind(ip_addr)</span><br><span class="line">server.listen(5)</span><br><span class="line"></span><br><span class="line">conn, addr = server.accept()</span><br><span class="line">print(addr)</span><br><span class="line"></span><br><span class="line">while True:</span><br><span class="line">    send_data = input(&quot;input:&quot;)</span><br><span class="line">    conn.send(bytes(send_data,encoding=&quot;ascii&quot;))</span><br><span class="line">    recv_data = conn.recv(1024)</span><br><span class="line">    print(str(recv_data, encoding=&quot;ascii&quot;))</span><br></pre></td></tr></table></figure></p>
+<p><strong>客户端:</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">	.386</span><br><span class="line">	.model flat,stdcall</span><br><span class="line">	option casemap:none</span><br><span class="line"></span><br><span class="line">include windows.inc</span><br><span class="line">include user32.inc</span><br><span class="line">include ws2_32.inc</span><br><span class="line">include kernel32.inc</span><br><span class="line">includelib user32.lib</span><br><span class="line">includelib kernel32.lib</span><br><span class="line">includelib ws2_32.lib</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">TCP_PORT equ 6666</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">	WSAData  WSADATA &lt;&gt;</span><br><span class="line">	stSin sockaddr_in &lt;&gt;</span><br><span class="line">	szServer byte &quot;127.0.0.1&quot;,0h</span><br><span class="line">	sock dd ?</span><br><span class="line">	Buff BYTE 256 dup (?)                ; 接收数据的缓冲区</span><br><span class="line">	Send BYTE &quot;ls&quot;,0h                 ; 发送数据缓冲区</span><br><span class="line">	Send1 BYTE &quot;down&quot;,0h</span><br><span class="line">	cmdls BYTE &quot;ls&quot;,0h</span><br><span class="line">	cmddown BYTE &quot;down&quot;,0h</span><br><span class="line">.code</span><br><span class="line">	main proc</span><br><span class="line">		invoke WSAStartup,0202h,addr WSAData</span><br><span class="line">		invoke socket,AF_INET, SOCK_STREAM, 0</span><br><span class="line">		.if(eax != INVALID_SOCKET)</span><br><span class="line">			mov sock,eax</span><br><span class="line">		.endif</span><br><span class="line">		</span><br><span class="line">		invoke RtlZeroMemory,addr stSin,sizeof stSin</span><br><span class="line">		</span><br><span class="line">		mov stSin.sin_family,AF_INET</span><br><span class="line">		invoke htons,TCP_PORT</span><br><span class="line">		mov stSin.sin_port,ax</span><br><span class="line">		invoke inet_addr,addr szServer</span><br><span class="line">		mov stSin.sin_addr,eax</span><br><span class="line">		invoke connect,sock,addr stSin,sizeof stSin    ; 连接套接字</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		.while(1)</span><br><span class="line">			invoke RtlZeroMemory,addr Buff,sizeof Buff</span><br><span class="line">			invoke recv,sock,addr Buff,sizeof Buff,0</span><br><span class="line"></span><br><span class="line">			invoke lstrcmp,addr cmdls,addr Buff                    ; 对比字符串是否是ls</span><br><span class="line">			.if(eax==0)</span><br><span class="line">				invoke send,sock,addr Send,sizeof Send,0</span><br><span class="line">				.continue</span><br><span class="line">			.endif</span><br><span class="line">			invoke lstrcmp,addr Buff,addr cmddown                  ; 对比是不是down</span><br><span class="line">			.if(eax==0)</span><br><span class="line">				invoke send,sock,addr Send1,sizeof Send1,0</span><br><span class="line">				.continue</span><br><span class="line">			.endif</span><br><span class="line">		.endw</span><br><span class="line">		</span><br><span class="line">		invoke closesocket,sock</span><br><span class="line">		invoke WSACleanup</span><br><span class="line">		ret</span><br><span class="line">	main endp</span><br><span class="line">end main</span><br></pre></td></tr></table></figure></p>
+<p><br></p>
+
+      
+    </div>
+
+    
+
+<!--增加的底部版权代码-->
+<div>
+      
+        ﻿
+<br>
+<div class="my_post_copyright">
+  <p><span>文章作者:</span><a href="/" title="访问 王瑞 的个人博客">王瑞</a></p>
+  <p><span>发布时间:</span>2019年04月20日 - 09:04</p>
+  <p><span>原始链接:</span><a href="/2019/04/20/汇编与反汇编/Win32汇编系统函数-5/" title="Win32汇编系统函数(5)">https://localhost/2019/04/20/汇编与反汇编/Win32汇编系统函数-5/</a>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者</p>
+</div>
+
+      
+</div>
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/汇编与反汇编/" rel="tag"> <i class="fa fa-tag"></i> 汇编与反汇编</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/19/汇编与反汇编/Win32汇编其他指令-4/" rel="next" title="Win32汇编其他指令(4)">
+                <i class="fa fa-chevron-left"></i> Win32汇编其他指令(4)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/25/汇编与反汇编/Win32汇编PE结构剖析-6/" rel="prev" title="Win32汇编PE结构剖析(6)">
+                Win32汇编PE结构剖析(6) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="王瑞">
+            
+              <p class="site-author-name" itemprop="name">王瑞</p>
+              <div class="site-description motion-element" itemprop="description">记录点滴技术成长之路</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">80</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/lyshark" title="GitHub &rarr; https://github.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="mailto:1181506874@qq.com" title="E-Mail &rarr; mailto:1181506874@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://plus.google.com/lyshark" title="Google &rarr; https://plus.google.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-google"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/lyshark" title="Twitter &rarr; https://twitter.com/lyshark" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="http://wpa.qq.com/msgrd?v=3&uin=1181506874&site=hupaiyule&menu=yes" title="QQ &rarr; http://wpa.qq.com/msgrd?v=3&uin=1181506874&site=hupaiyule&menu=yes" rel="noopener" target="_blank"><i class="fa fa-fw fa-qq"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://weixin.qq.com" title="Wechat &rarr; https://weixin.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-weixin"></i></a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#通用系统函数"><span class="nav-text">通用系统函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存分配函数"><span class="nav-text">内存分配函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#◆标准内存管理◆"><span class="nav-text">◆标准内存管理◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆堆管理函数◆"><span class="nav-text">◆堆管理函数◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆虚拟内存函数◆"><span class="nav-text">◆虚拟内存函数◆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件与磁盘函数"><span class="nav-text">文件与磁盘函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#◆文件相关函数◆"><span class="nav-text">◆文件相关函数◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆磁盘相关函数◆"><span class="nav-text">◆磁盘相关函数◆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程与线程函数"><span class="nav-text">进程与线程函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#◆进程相关函数◆"><span class="nav-text">◆进程相关函数◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆线程相关函数◆"><span class="nav-text">◆线程相关函数◆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DLL与线程注入"><span class="nav-text">DLL与线程注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#◆创建动态链接库◆"><span class="nav-text">◆创建动态链接库◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆远程线程DLL注入◆"><span class="nav-text">◆远程线程DLL注入◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆远程线程代码注入◆"><span class="nav-text">◆远程线程代码注入◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆创建Windows钩子◆"><span class="nav-text">◆创建Windows钩子◆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册表和INI文件"><span class="nav-text">注册表和INI文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#◆注册表相关◆"><span class="nav-text">◆注册表相关◆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#◆INI文件相关◆"><span class="nav-text">◆INI文件相关◆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用对话框"><span class="nav-text">通用对话框</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络相关函数"><span class="nav-text">网络相关函数</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+
+<!-- 屏蔽版权开始 -->
+&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王瑞</span>
+<!-- 屏蔽版权结束 -->
+	 | 页面托管于 GitHub/Coding 主机
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+<script type="text/javascript" src="/js/coloured.js"></script>
+
+
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/poi.model.json"},"display":{"superSample":2,"width":300,"height":290,"position":"left","hOffset":0,"vOffset":-10},"mobile":{"show":true,"scale":0},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
